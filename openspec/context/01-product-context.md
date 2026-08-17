@@ -2,32 +2,47 @@
 
 ## Назначение и ценность
 
+- Проект предоставляет стек видеоконференций Jitsi Meet для проведения встреч и
+  встраивания видеосвязи в другие продукты. Источник:
+  `../src/jitsi-web/README.md:1-4`, `../src/jitsi-control/README.md:3`,
+  `../src/jitsi-videobridge/README.md:3-4`.
+- Отдельные проверяемые продуктовые метрики и бизнес-цели пока не подтверждены.
+
 <!-- TODO
-question: Какую проблему решает проект и какую проверяемую ценность даёт?
+question: Какую проверяемую ценность и метрики успеха проект фиксирует помимо общей возможности проводить и встраивать видеоконференции?
 owner: unassigned
 expected_source: Product documentation or maintainer confirmation
 -->
 
 ## Пользователи и участники
 
-<!-- TODO
-question: Кто использует проект и какие внешние участники с ним взаимодействуют?
-owner: unassigned
-expected_source: User research, product documentation, or maintained requirements
--->
+- Организаторы и участники видеоконференций.
+- Разработчики продуктов, встраивающие видеосвязь через публичный External API.
+- Операторы, самостоятельно разворачивающие и сопровождающие Jitsi Meet.
+
+Источники: `../src/jitsi-web/README.md:1-4,45-60`,
+`../src/jitsi-web/modules/API/external/index.js:1-3`.
 
 ## Основные сценарии
 
+- Создать конференцию и присоединить к ней участников.
+- Передавать между участниками аудио и видео с управлением качеством соединения.
+- Встроить видеоконференцию в сторонний продукт.
+- Подключить дополнительные возможности записи, стриминга или SIP через внешние
+  компоненты.
+
 <!-- TODO
-question: Какие устойчивые пользовательские или операционные сценарии определяют проект?
+question: Какие пользовательские сценарии считаются приоритетными и какие критерии приёмки действуют для каждого из них?
 owner: unassigned
-expected_source: Maintained requirements or project documentation
+expected_source: Maintained requirements or product documentation
 -->
 
 ## Границы и ограничения
 
-<!-- TODO
-question: Что входит и не входит в ответственность проекта?
-owner: unassigned
-expected_source: Scope documentation or maintainer confirmation
--->
+- Центральный Store координирует три Code Repository: `jitsi-web`, `jitsi-control` и
+  `jitsi-videobridge`. Их общие ответственности описаны в `system-map.yaml`.
+- Prosody, Jibri, Jigasi и `docker-jitsi-meet` участвуют в работе продукта, но не
+  зарегистрированы как отдельные Code Repositories этого Store.
+- `jitsi-web` в рамках Repository impact охватывает пользовательские клиенты,
+  встраивание и поставляемые вместе с ним вспомогательные компоненты; локальное
+  техническое устройство остаётся в `../src/jitsi-web/CLAUDE.md`.

@@ -1,15 +1,15 @@
 # Release process
 
-Релиз должен продвигать тот же artifact, который связан со Snapshot успешного Gate
-3. Замена commit, build или image после проверки создаёт нового кандидата и требует
-повторной проверки.
+Релиз должен продвигать тот же Snapshot и поставляемый результат, которые прошли
+проверку. Замена commit или artifact создаёт нового кандидата и требует повторной
+проверки.
 
 ## Среды и продвижение
 
 <!-- TODO
-question: Какие среды существуют и как изменение продвигается между ними?
+question: Какие среды существуют и как подтверждённый Snapshot продвигается между ними?
 owner: unassigned
-expected_source: Deployment configuration, pipelines, runbooks, or maintainer confirmation
+expected_source: Deployment policy, runbooks or maintainer confirmation
 -->
 
 ## Миграции и управление включением
@@ -17,34 +17,26 @@ expected_source: Deployment configuration, pipelines, runbooks, or maintainer co
 <!-- TODO
 question: Как выполняются миграции и управляется постепенное включение изменений?
 owner: unassigned
-expected_source: Runbooks, deployment configuration, or accepted ADRs
+expected_source: Runbooks, deployment policy or accepted ADRs
 -->
 
 ## Наблюдение и откат
 
+- До Gate 3 должны быть определены наблюдаемые сигналы успешности и условия отката
+  для всего затронутого пользовательского сценария.
+- Конкретные метрики, endpoints, команды и процедуры отдельного компонента принадлежат
+  соответствующему Code Repository.
+
 <!-- TODO
-question: Какие сигналы останавливают поставку и как выполняется откат?
+question: Какие общие сигналы останавливают поставку и кто принимает решение об откате?
 owner: unassigned
-expected_source: Monitoring, runbooks, incidents, or maintainer confirmation
+expected_source: Monitoring policy, runbooks, incidents or maintainer confirmation
 -->
 
-## Archive и Confluence
+## Archive
 
 - Archive разрешён только после завершения всех реализаций и обязательной ручной
   проверки.
 - Штатный OpenSpec Archive остаётся владельцем применения Delta Specs к Master Specs
   и перемещения Change.
-- При Archive обязательно создаётся или обновляется одна производная копия в
-  Confluence.
-- Ключ идемпотентности публикации включает Store, `change-id` и archive revision.
-- Confluence-страница содержит ссылку на Jira, архивную Git revision, Specs, Design,
-  Snapshot, release artifact, PR, Zephyr и решения Gate.
 - При расхождении источником истины остаётся архивная Git revision OpenSpec Store.
-- Сбой публикации не изменяет OpenSpec, но Archive handoff остаётся незавершённым до
-  успешного повтора.
-
-<!-- TODO
-question: Какой Confluence space, parent page и сервисный credential используются для публикации?
-owner: unassigned
-expected_source: Confluence administration and security policy
--->

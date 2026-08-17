@@ -1,13 +1,85 @@
 version: 1
 
-# repositories[]: id, responsibilities, systems, context, sources
-# systems[]: id, name, responsibilities, location, sources
-# relationships[]: from, to, type, contract, sources
-# При наличии openspec-orch.yaml repository id должны точно совпадать с его
-# repositories[role=code]. Не копируйте сюда remote и default branch.
-# Добавляйте только подтверждённые репозитории, системы и связи; id уникальны внутри
-# своей секции.
+# Registry identity, remotes and default branches belong only to openspec-orch.yaml.
+# This map contains high-level responsibilities and cross-system contracts. Local
+# modules, technologies, configuration, build/test commands, CI and packaging belong
+# to the corresponding Code Repository.
 
-repositories: []
-systems: []
-relationships: []
+repositories:
+  - id: jitsi-web
+    responsibilities:
+      - Пользовательское взаимодействие с конференцией
+      - Встраивание видеосвязи в сторонние продукты
+      - Клиентская сторона сигнализации и медиасоединения
+    systems: [xmpp-signaling]
+    sources:
+      - ../src/jitsi-web/README.md:1-4
+      - ../src/jitsi-web/modules/API/external/index.js:1-3
+
+  - id: jitsi-control
+    responsibilities:
+      - Координация конференции и участников
+      - Выбор и управление медиамостами
+      - Координация внешних конференционных интеграций
+    systems: [xmpp-signaling]
+    sources:
+      - ../src/jitsi-control/README.md:13-20
+
+  - id: jitsi-videobridge
+    responsibilities:
+      - Приём и пересылка медиапотоков участников
+      - Управление качеством пересылаемого медиа
+      - Поддержка конференций на нескольких медиамостах
+    systems: []
+    sources:
+      - ../src/jitsi-videobridge/README.md:3-4
+
+systems:
+  - id: xmpp-signaling
+    name: XMPP-сигнализация и комнаты конференций
+    responsibilities:
+      - Поддержка комнат конференций
+      - Сигнальное взаимодействие клиентов и управляющих компонентов
+      - Применение согласованной модели аутентификации
+    location: >
+      Внешняя система, не зарегистрированная как отдельный Code Repository этого
+      Store. Часть связанных расширений поставляется из jitsi-web.
+    sources:
+      - ../src/jitsi-control/README.md:52-66
+
+relationships:
+  - from: jitsi-web
+    to: xmpp-signaling
+    type: signaling
+    contract: Клиент присоединяется к комнате конференции и обменивается сигналами.
+    sources:
+      - ../src/jitsi-web/config.js:31-52
+
+  - from: jitsi-control
+    to: xmpp-signaling
+    type: signaling
+    contract: Управляющая система координирует конференцию и доступные компоненты.
+    sources:
+      - ../src/jitsi-control/README.md:52-66
+
+  - from: jitsi-web
+    to: jitsi-control
+    type: conference-control
+    contract: Клиент запрашивает создание конференции или подключение к ней.
+    sources:
+      - ../src/jitsi-control/doc/conference-request.md:13-52
+
+  - from: jitsi-control
+    to: jitsi-videobridge
+    type: media-control
+    contract: Управляющая система создаёт и изменяет конференцию на выбранном медиамосте.
+    sources:
+      - ../src/jitsi-control/README.md:19-20
+      - ../src/jitsi-videobridge/doc/rest-colibri2.md:9-40
+
+  - from: jitsi-web
+    to: jitsi-videobridge
+    type: media
+    contract: Клиент передаёт и получает медиапотоки через выбранный медиамост.
+    sources:
+      - ../src/jitsi-videobridge/doc/web-sockets.md:6-19

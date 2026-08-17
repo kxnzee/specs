@@ -1,36 +1,52 @@
 # Security and compliance
 
 Не записывайте сюда секреты, токены, приватные ключи и лишние персональные данные.
-Фиксируйте только устойчивые правила и проверяемые ограничения.
+Центральный Store фиксирует обязательное поведение и общие ограничения; конкретные
+параметры реализации принадлежат Code Repositories.
 
 ## Данные и классификация
 
+- Продукт обрабатывает медиапотоки, данные участников, метаданные конференции и
+  данные аутентификации.
+- Подтверждённая единая классификация и сроки хранения этих данных пока отсутствуют.
+
 <!-- TODO
-question: Какие категории данных обрабатываются и как они классифицируются?
+question: Какие категории данных подлежат классификации, где они обрабатываются и как долго хранятся?
 owner: unassigned
-expected_source: Data inventory, schemas, security policy, or maintainer confirmation
+expected_source: Data inventory, security policy or maintainer confirmation
 -->
 
 ## Доступ, аудит и приватность
 
+- При включённой аутентификации клиентская и управляющая стороны должны применять
+  согласованную модель доступа к конференции.
+- Межсистемные соединения, передающие учётные данные или медиаданные, должны
+  использовать подтверждённые проектом механизмы защиты.
+- Политика журналирования и редактирования персональных данных пока не подтверждена
+  как единое межсистемное требование.
+
 <!-- TODO
-question: Какие правила доступа, журналирования, аудита и приватности обязательны?
+question: Какие правила доступа, журналирования, аудита и приватности обязательны для всех компонентов продукта?
 owner: unassigned
-expected_source: Security policy, configuration, or compliance documentation
+expected_source: Security policy, compliance documentation or maintainer confirmation
 -->
 
 ## Безусловные запреты
 
+- Не помещать секреты, токены, приватные ключи и персональные данные в OpenSpec
+  context, Specs, Changes или evidence.
+
 <!-- TODO
-question: Какие данные или действия запрещено сохранять, логировать или передавать?
+question: Какие дополнительные данные или действия запрещено сохранять, логировать или передавать?
 owner: unassigned
-expected_source: Security policy, incident findings, or maintainer confirmation
+expected_source: Security policy or incident findings
 -->
 
 ## Операции, требующие человеческого решения
 
-<!-- TODO
-question: Какие изменения агент не должен выполнять без отдельного подтверждения или ревью?
-owner: unassigned
-expected_source: Project instructions, security policy, or ownership rules
--->
+- Сообщения об уязвимостях направляются через согласованный закрытый канал, а не
+  через публичные issue. Источник: `../src/jitsi-web/SECURITY.md:7`,
+  `../src/jitsi-control/SECURITY.md:5-9`,
+  `../src/jitsi-videobridge/SECURITY.md:7-9`.
+- Изменение общей модели аутентификации, приватности или межсистемного security
+  contract требует явного человеческого review.
