@@ -34,11 +34,7 @@
 
 ## Open questions
 
-<!-- TODO
-question: Какие среды (dev/staging/prod), процесс миграций и правила отката существуют для этого проекта? Не подтверждено кодом трёх зарегистрированных репозиториев.
-owner: unassigned
-expected_source: Deployment configuration, runbooks, or maintainer confirmation
--->
+- Среды, миграции и rollback: см. `08-release-process.md`.
 
 <!-- TODO
 question: Какие знания проекта пока не удаётся однозначно направить в тематический файл?
