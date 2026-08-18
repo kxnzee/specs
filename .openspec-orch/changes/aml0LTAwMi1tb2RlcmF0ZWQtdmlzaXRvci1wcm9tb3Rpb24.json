@@ -1,11 +1,11 @@
 {
   "contract_version": 1,
-  "cycle_id": "cycle-09ef70bb-770f-4e70-8e47-be78409492c9",
+  "cycle_id": "cycle-42e9b809-51db-4e4a-a9a5-857ddd5318cb",
   "change_id": "jit-002-moderated-visitor-promotion",
-  "planning_revision": "af37949c504c5317c0eb9a9f1cedcb5b54a6e229",
+  "planning_revision": "2a802afdd34d304078c36ea2bc06021f2b3fa008",
   "repositories": [
-    "jitsi-web",
-    "jitsi-control"
+    "jitsi-control",
+    "jitsi-web"
   ],
-  "created_at": "2026-08-18T04:43:31.400Z"
+  "created_at": "2026-08-18T06:44:31.839Z"
 }
