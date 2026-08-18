@@ -1,0 +1,11 @@
+{
+  "contract_version": 1,
+  "cycle_id": "cycle-09ef70bb-770f-4e70-8e47-be78409492c9",
+  "change_id": "jit-002-moderated-visitor-promotion",
+  "planning_revision": "af37949c504c5317c0eb9a9f1cedcb5b54a6e229",
+  "repositories": [
+    "jitsi-web",
+    "jitsi-control"
+  ],
+  "created_at": "2026-08-18T04:43:31.400Z"
+}
