@@ -112,7 +112,7 @@ into what must behave as an independent action.
 | repository-id | Часть решения | Изменяемые границы | Входящие контракты | Исходящие контракты | Зависимости | Порядок |
 |---|---|---|---|---|---|---|
 | `jitsi-web` | (a) Действие "включить в разговор" на `CurrentVisitorsList`; (b) новый action в `visitors/actions.ts`, симметричный `demoteRequest`, отправляющий moderator-initiated promote-сообщение через существующий канал; (c) новый action-тип в `mod_visitors_component.lua`, симметричный `process_promotion_response`, без требования предшествующего request; (d) на стороне промотируемого зрителя — без изменений: существующий `CONNECTION_REDIRECTED` → `redirect()` уже обрабатывает переход. | `react/features/participants-pane/components/web/CurrentVisitorsList.tsx`, `react/features/visitors/actions.ts`, `resources/prosody-plugins/mod_visitors_component.lua` | Клик модератора в UI | XMPP/IQ-сообщение к prosody-компоненту visitors; `promotion-response`-подобный ответ промотируемому зрителю | — | 1 |
-| `jitsi-control` | Изменений кода не предполагается. Подтверждено, что `isAllowedInMainRoom`/`isPreferredInMainRoom` (`ChatRoomImpl.kt:222-240`) читают state store (`participants`/`moderators` из `room_metadata`-компонента), не связанный в коде с `visitors_promotion_map`, который пишет approve-flow — то есть jicofo, вероятно, вообще не участвует в admission для этого потока. Требуется verification-задача: эмпирически подтвердить это и убедиться, что moderator-initiated reconnect проходит тем же путём, что и уже работающий approve-flow. | нет | — | — | `jitsi-web` (Decision 2/3) | 2 — verification only |
+| `jitsi-control` | Минимальное изменение `redirectVisitor()` (`JitsiMeetConferenceImpl.java:1979-2043`): убрать `visitorsAlreadyUsed` из условия принудительного редиректа на visitor node, оставив только явный запрос visitor и превышение `participantsSoftLimit`. Подтверждено, что `isAllowedInMainRoom`/`isPreferredInMainRoom` не связаны с `visitors_promotion_map` и не являются точкой фикса; реальный gate — `redirectVisitor`, который сегодня "залипает" в visitor-режим для любого реконнекта без явного запроса, включая уже одобренного/промотированного зрителя. | `redirectVisitor()` | `ConferenceIq` (запрос реконнекта) | `ConferenceIq`-ответ (`vnode`/`focusJid` или их отсутствие) | `jitsi-web` (Decision 2/3 — прежний сигнал `visitorRequested`/capacity уже покрывает случай) | 2 — implementation |
 | `jitsi-videobridge` | Без изменений — подтверждено дважды независимо (Proposal и повторная проверка); кода, специфичного для visitor promote/demote, не найдено. | — | — | — | — | — |
 
 Это уточняет Repository impact из Proposal: тип влияния `jitsi-control` фактически
@@ -142,30 +142,43 @@ into what must behave as an independent action.
 
 ## Open Questions
 
-- Подтверждено (отдельной независимой проверкой): join-time проверка jicofo
-  (`ConferenceIqHandler.kt:167-168,180`, `ChatRoomImpl.kt:212,220,222-240,378-392`)
-  читает `participants`/`moderators` из state store, который наполняется
-  `RoomMetadataHandler` (`RoomMetadataHandler.kt:50-71,86-96`) из отдельного
-  prosody-модуля `mod_room_metadata_component.lua`
-  (`mod_room_metadata_component.lua:103-116,183-196`). Approve-flow при этом
-  пишет совершенно в другое состояние — `visitors_promotion_map`/
-  `metadata.visitors.promoted` в `mod_visitors_component.lua:511,529-537`. Кода,
-  синхронизирующего эти два state store, не найдено ни в `jitsi-control`, ни в
-  прочитанной части `jitsi-web`.
-  Рабочая гипотеза: реальный допуск reconnect для уже одобренного зрителя
-  сегодня обеспечивается не проверкой jicofo `isAllowedInMainRoom`, а MUC room
-  password, который `mod_visitors_component.lua` формирует на основе
-  `visitors_promotion_map` при join (`mod_visitors_component.lua:505-509`), то
-  есть jicofo может вообще не быть участником admission-решения для этого
-  потока. Это не опровергает и не меняет Decision 2/3 (мы по-прежнему
-  зеркалируем именно тот механизм, который уже производит рабочий reconnect
-  сегодня, каким бы он ни был) — но означает, что Repository impact для
-  `jitsi-control` в Repository implementation map может оказаться не
-  "verification-only", а буквально "no-change" после подтверждения.
-  Не разрешимо дальнейшим чтением исходников в рамках Design — требует
-  эмпирической трассировки reconnect-запроса зрителя (`disconnect()`→
-  `connect()`) в Tasks: зафиксировать, какой именно stanza/IQ реально
-  предъявляется при повторном join (MUC presence с паролем vs. новый
-  `ConferenceIq` через `ConferenceIqHandler`), и подтвердить или опровергнуть
-  участие jicofo в admission для нового moderator-initiated пути тем же
-  способом.
+- **Resolved by Task 1.1/1.2 (`jitsi-control`, code evidence, no live trace available):**
+  jicofo has no MUC-password-handling code at all (confirmed by exhaustive
+  search of the MUC/XMPP handler code) — the room-password mechanism
+  (`mod_visitors_component.lua:505-509`) is entirely invisible to jicofo, which
+  only ever sees a member after prosody has already admitted it. However,
+  reconnect (`disconnect()`→`connect()`) does perform a fresh `ConferenceIq`
+  round-trip with jicofo: confirmed directly by a code comment on the
+  promotion reconnect path in `jitsi-web`
+  (`react/features/base/conference/functions.ts:307-308`): "if the room
+  capacity is full the promotion to the main room will fail and the visitor
+  will be redirected back to a vnode from jicofo". So jicofo **is** an active
+  participant in admission — both mechanisms are involved, not one or the
+  other: the `ConferenceIq` round-trip decides which room (main vs. visitor
+  node) the reconnecting client is directed to, and MUC/password governs
+  actual room entry once that destination is chosen.
+  This corrects the earlier working hypothesis in this section (that jicofo
+  might not participate in admission at all) and confirms Repository impact
+  for `jitsi-control` in the Repository implementation map is implementation,
+  not "no-change".
+- **New finding, changes which jicofo function is relevant:** `isAllowedInMainRoom`/
+  `isPreferredInMainRoom` (`ChatRoomImpl.kt:222-240`) are confirmed, as
+  originally suspected, to read `participants`/`moderators` from room-metadata
+  state (`RoomMetadataHandler`), unrelated to `visitors_promotion_map` — but
+  they are not the function that gates the promoted visitor's reconnect. That
+  gate is **`redirectVisitor()`** (`JitsiMeetConferenceImpl.java:1979-2043`,
+  called from `ConferenceIqHandler.kt:180-185` immediately after computing
+  those two checks), whose actual condition is:
+  ```java
+  if (visitorsAlreadyUsed || visitorRequested || participantCount >= participantsSoftLimit) {
+      return selectVisitorNode();
+  }
+  ```
+  `visitorsAlreadyUsed` (true whenever any visitor sub-room currently exists
+  for the conference — essentially always true once visitor mode has
+  activated) forces every subsequent non-visitor-requesting reconnect back to
+  a visitor node regardless of capacity headroom, including a moderator-
+  promoted visitor's reconnect. `redirectVisitor` does not consult
+  `visitors_promotion_map` or any promotion state either.
+  Task 1.3 is updated accordingly to target `redirectVisitor`, not
+  `isAllowedInMainRoom`/`isPreferredInMainRoom`.
