@@ -1,24 +1,46 @@
 version: 1
-strict: true
+template:
+  id: default
+agent:
+  id: claude
+extensions:
+  - spec-driven-extended
+  - superpowers
+plugins:
+  - change-tracking
+  - codegraph
+  - openspec-graph
 repositories:
   - id: specs
     roles:
       - store
     remote: https://github.com/kxnzee/specs
     default_branch: main
+    plugins:
+      - change-tracking
+      - codegraph
+      - openspec-graph
   - id: jitsi-web
     roles:
       - code
     remote: https://github.com/kxnzee/jitsi-meet.git
     default_branch: master
+    plugins:
+      - change-tracking
+      - codegraph
   - id: jitsi-control
     roles:
       - code
     remote: https://github.com/kxnzee/jicofo.git
     default_branch: master
+    plugins:
+      - change-tracking
+      - codegraph
   - id: jitsi-videobridge
     roles:
       - code
     remote: https://github.com/kxnzee/jitsi-videobridge.git
     default_branch: master
-extensions: {}
+    plugins:
+      - change-tracking
+      - codegraph

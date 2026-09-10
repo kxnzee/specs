@@ -1,0 +1,5 @@
+schema: superspec-multirepo
+created: 2026-09-10
+goal: Make the cross-repository control and media responsibilities explicit for
+  contributors.
+skip_specs: true
