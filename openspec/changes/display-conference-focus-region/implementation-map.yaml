@@ -1,0 +1,106 @@
+contract_version: 1
+change_id: display-conference-focus-region
+attempts: []
+implementations:
+  - repository_id: jitsi-control
+    task:
+      id: "1"
+      description: 1.1 Добавить `focus-region` в ответ создания конференции при непустом
+    schema_name: spec-driven-extended
+    pull_request: https://github.com/kxnzee/jicofo/pull/3
+    plan_url: https://github.com/kxnzee/jicofo/pull/3
+    commits:
+      - 89b1529796eae619c3de786eb1f8c668c897b30e
+    summary: Поле добавлено; тест заполненного значения проходит
+    remaining: ""
+    version: 1
+  - repository_id: jitsi-control
+    task:
+      id: "2"
+      description: 1.2 Не добавлять свойство при отсутствующем или пустом значении
+    schema_name: spec-driven-extended
+    pull_request: https://github.com/kxnzee/jicofo/pull/3
+    plan_url: https://github.com/kxnzee/jicofo/pull/3
+    commits:
+      - 89b1529796eae619c3de786eb1f8c668c897b30e
+    summary: Отсутствие поля покрыто двумя backend-тестами
+    remaining: ""
+    version: 1
+  - repository_id: lib-jitsi-meet
+    task:
+      id: "3"
+      description: 2.1 Разобрать непустое `focus-region` из ответа создания конференции и
+    schema_name: spec-driven-extended
+    pull_request: https://github.com/kxnzee/lib-jitsi-meet/pull/1
+    plan_url: https://github.com/kxnzee/lib-jitsi-meet/pull/1
+    commits:
+      - 1b47d8d038f763a49d4509bd9e90f55f9cac6be5
+      - 33f6a34c9e9ac2b3dad30e0b673583942d19c637
+    summary: Свойство разбирается и доступно через API; browser tests проходят
+    remaining: ""
+    version: 1
+  - repository_id: lib-jitsi-meet
+    task:
+      id: "4"
+      description: 2.2 Зафиксировать значение или его отсутствие по первому успешному
+        ответу и
+    schema_name: spec-driven-extended
+    pull_request: https://github.com/kxnzee/lib-jitsi-meet/pull/1
+    plan_url: https://github.com/kxnzee/lib-jitsi-meet/pull/1
+    commits:
+      - 1b47d8d038f763a49d4509bd9e90f55f9cac6be5
+      - 33f6a34c9e9ac2b3dad30e0b673583942d19c637
+    summary: Snapshot semantics покрыты положительным и отрицательным browser-тестами
+    remaining: ""
+    version: 1
+  - repository_id: jitsi-web
+    task:
+      id: "5"
+      description: "3.1 Добавить web-only label `Conference region: <value>` в существующую"
+    schema_name: spec-driven-extended
+    pull_request: https://github.com/kxnzee/jitsi-meet/pull/2
+    plan_url: https://github.com/kxnzee/jitsi-meet/pull/2
+    commits:
+      - c9c0910031d4eecdc676c22a04c4427d48da5798
+    summary: Web label добавлен в ConferenceInfo; ESLint и tsc:web проходят
+    remaining: ""
+    version: 1
+  - repository_id: jitsi-web
+    task:
+      id: "6"
+      description: 3.2 Скрывать label при отсутствующем, пустом или некорректном
+        значении без
+    schema_name: spec-driven-extended
+    pull_request: https://github.com/kxnzee/jitsi-meet/pull/2
+    plan_url: https://github.com/kxnzee/jitsi-meet/pull/2
+    commits:
+      - c9c0910031d4eecdc676c22a04c4427d48da5798
+    summary: Компонент возвращает null для отсутствующего, пустого и нестрокового
+      значения
+    remaining: ""
+    version: 1
+  - repository_id: jitsi-web
+    task:
+      id: "7"
+      description: 3.3 Получать подпись через i18n и передавать значение как обычный
+        React text
+    schema_name: spec-driven-extended
+    pull_request: https://github.com/kxnzee/jitsi-meet/pull/2
+    plan_url: https://github.com/kxnzee/jitsi-meet/pull/2
+    commits:
+      - c9c0910031d4eecdc676c22a04c4427d48da5798
+    summary: Подпись добавлена в i18n, значение передается в text prop
+    remaining: ""
+    version: 1
+  - repository_id: jitsi-web
+    task:
+      id: "8"
+      description: 3.4 Не менять мобильные компоненты
+    schema_name: spec-driven-extended
+    pull_request: https://github.com/kxnzee/jitsi-meet/pull/2
+    plan_url: https://github.com/kxnzee/jitsi-meet/pull/2
+    commits:
+      - c9c0910031d4eecdc676c22a04c4427d48da5798
+    summary: Изменение ограничено web ConferenceInfo; mobile-компоненты не менялись
+    remaining: ""
+    version: 1
