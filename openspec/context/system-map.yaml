@@ -25,6 +25,15 @@ repositories:
     sources:
       - ../src/jitsi-control/README.md:13-20
 
+  - id: lib-jitsi-meet
+    responsibilities:
+      - Клиентский API конференции и соединения
+      - Обработка клиентской XMPP-сигнализации
+      - Передача конференционных данных в пользовательские клиенты
+    systems: [xmpp-signaling]
+    sources:
+      - ../src/lib-jitsi-meet/README.md:1-9
+
   - id: jitsi-videobridge
     responsibilities:
       - Приём и пересылка медиапотоков участников
@@ -49,6 +58,13 @@ systems:
 
 relationships:
   - from: jitsi-web
+    to: lib-jitsi-meet
+    type: client-library
+    contract: Web-клиент использует библиотеку для конференционного API и сигнализации.
+    sources:
+      - ../src/jitsi-web/package.json:81
+
+  - from: jitsi-web
     to: xmpp-signaling
     type: signaling
     contract: Клиент присоединяется к комнате конференции и обменивается сигналами.
@@ -62,10 +78,10 @@ relationships:
     sources:
       - ../src/jitsi-control/README.md:52-66
 
-  - from: jitsi-web
+  - from: lib-jitsi-meet
     to: jitsi-control
     type: conference-control
-    contract: Клиент запрашивает создание конференции или подключение к ней.
+    contract: Клиентская библиотека запрашивает создание конференции или подключение к ней.
     sources:
       - ../src/jitsi-control/doc/conference-request.md:13-52
 
