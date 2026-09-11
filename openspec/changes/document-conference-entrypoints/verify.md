@@ -19,16 +19,17 @@
   [intake.md](./intake.md#22-основной-сценарий); Delta Specs не создавались,
   потому что поведение системы не меняется.
 - **Кандидат:** [implementation-map.yaml](./implementation-map.yaml)
-- **Среда и данные:** ветка `master` репозиториев `jitsi-meet` и `jicofo`;
-  тестовые данные и запуск приложения не нужны — изменение документационное.
+- **Среда и данные:** checkout кандидата `jitsi-web` и `jitsi-control`,
+  подготовленные через Change Tracking; тестовые данные и запуск приложения не
+  нужны — изменение документационное.
 
 ## Сценарии ручной проверки
 
 | Сценарий | Действия проверяющего | Ожидаемый результат | Подтверждение агента | Решение человека |
 | --- | --- | --- | --- | --- |
-| Acceptance case: путь входа в конференцию | Открыть [документ клиента](https://github.com/kxnzee/jitsi-meet/blob/master/doc/conference-entrypoint.md), затем [документ Jicofo](https://github.com/kxnzee/jicofo/blob/master/doc/conference-entrypoint.md). Пройти описанный путь от `ConferenceConnector.connect()` до `ConferenceIqHandler` и `FocusManager`. | Понятно, какой код начинает join, как запрос доходит до Jicofo и где создаётся или находится конференция; описана ветка недоступности Jicofo. | `PASS` — анкеры сверены с кодом на `master`. | `PASS` |
+| Acceptance case: путь входа в конференцию | Открыть `jitsi-web:doc/conference-entrypoint.md`, затем `jitsi-control:doc/conference-entrypoint.md`. Пройти описанный путь от `ConferenceConnector.connect()` до `ConferenceIqHandler` и `FocusManager`. | Понятно, какой код начинает join, как запрос доходит до Jicofo и где создаётся или находится конференция; описана ветка недоступности Jicofo. | `PASS` — анкеры сверены с кодом кандидата. | `PASS` |
 | Acceptance case: документ читается отдельно | Открыть каждый документ отдельно и перейти по ссылке на вторую сторону. | Каждый документ объясняет свою ответственность без обязательного чтения второго; кросс-ссылки ведут на нужные файлы. | `PASS` — оба направления ссылок проверены. | `PASS` |
-| Acceptance case: протокол не дублируется | Сопоставить [документ Jicofo](https://github.com/kxnzee/jicofo/blob/master/doc/conference-entrypoint.md) с [описанием conference request](https://github.com/kxnzee/jicofo/blob/master/doc/conference-request.md). | Entry-point документ объясняет путь по коду и ссылается на протокол, не копируя форматы сообщений. | `PASS` — дублирования wire-format не найдено. | `PASS` |
+| Acceptance case: протокол не дублируется | Сопоставить `jitsi-control:doc/conference-entrypoint.md` с `jitsi-control:doc/conference-request.md`. | Entry-point документ объясняет путь по коду и ссылается на протокол, не копируя форматы сообщений. | `PASS` — дублирования wire-format не найдено. | `PASS` |
 | Принятый риск: будущий дрейф анкеров | При следующем изменении упомянутого кода повторно открыть file:line-ссылки. | Проверяющий либо подтверждает актуальность ссылок, либо возвращает документацию на доработку. | `N/A` — риск относится к будущим изменениям. | `N/A` |
 
 ## Автоматические проверки
@@ -37,8 +38,8 @@
 | --- | --- | --- |
 | Валидация OpenSpec (strict) | `PASS` | Change проходит строгую валидацию без ошибок. |
 | Состояние задач | `PASS` | [tasks.md](./tasks.md) — 5 из 5 задач завершены. |
-| Опубликованный кандидат | `PASS` | [jitsi-meet PR #1](https://github.com/kxnzee/jitsi-meet/pull/1) и [jicofo PR #1](https://github.com/kxnzee/jicofo/pull/1) смёржены; версии зафиксированы в карте реализации. |
-| Границы изменения | `PASS` | В обоих PR добавлен только `doc/conference-entrypoint.md`; `jitsi-videobridge` не менялся. |
+| Кандидат в checkout | `PASS` | Change Tracking подготовил candidate checkout; оба документа присутствуют по указанным путям. |
+| Границы изменения | `PASS` | В checkout кандидата добавлены только два документа по указанным путям; `jitsi-videobridge` не менялся. |
 <!-- SCENARIO_VERIFICATION_CONTRACT_V1_END -->
 
 <!-- FEATURE_ACCEPTANCE_CONTRACT_V1_START -->
