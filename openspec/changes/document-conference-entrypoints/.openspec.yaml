@@ -1,0 +1,5 @@
+schema: spec-driven-extended
+created: 2026-09-10
+goal: Give contributors one evidence-backed path from client join to conference
+  orchestration.
+skip_specs: true

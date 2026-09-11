@@ -1,0 +1,261 @@
+name: superspec-multirepo
+version: 2
+description: >
+  Complete Superspec lifecycle adapted to a central multi-repository OpenSpec Store:
+  brainstorm → proposal → optional design → specs → tasks → plan → verify.
+  OpenSpec governs artifacts; Superpowers governs execution discipline;
+  Orchestrator owns repository identity and team gates.
+
+artifacts:
+  - id: brainstorm
+    generates: brainstorm.md
+    description: User-approved exploration using Superpowers brainstorming
+    template: brainstorm.md
+    instruction: |
+      Invoke **superpowers:brainstorming** and follow its collaborative dialogue.
+
+      Override its default output location:
+      - write the validated result only to this Change's brainstorm.md;
+      - do not create docs/superpowers/specs/;
+      - if the dialogue resolves non-trivial technical decisions, pre-fill this
+        Change's optional design.md instead of creating a second design document.
+
+      Explore project context, ask one question at a time, present 2-3 alternatives
+      with trade-offs and obtain explicit user approval. Record the problem,
+      constraints, success criteria, agreed approach, decisions and open questions.
+      Do not implement or create later artifacts before approval.
+      After approval finish this artifact and return to OpenSpec. Do not follow
+      brainstorming's automatic writing-plans handoff: Proposal, Specs and Tasks
+      must precede Plan. Do not commit Store artifacts from this skill.
+    requires: []
+
+  - id: proposal
+    generates: proposal.md
+    description: Governed OpenSpec Change contract derived from brainstorming
+    template: proposal.md
+    instruction: |
+      Use accepted planning sources and normative Store artifacts for this stage.
+      Do not inspect Code Repositories to formulate Proposal, Requirements or Scenarios.
+      Read brainstorm.md and create the OpenSpec Proposal. Extract motivation,
+      observable changes, capability impact and constraints without repeating the
+      dialogue. Keep implementation choices out of Proposal.
+
+      Add a strict Repository Impact table. Include only registered Code Repositories
+      expected to change, using exact IDs from openspec-orch.yaml. Map every row to
+      one or more exact new or modified capability paths. Do not list the Store,
+      review-only repositories or guessed repositories.
+
+      Every behavior change must declare at least one capability. For a pure refactor,
+      tooling or documentation change, explicitly use the supported OpenSpec
+      skip-specs mechanism instead of inventing a Requirement.
+    requires:
+      - brainstorm
+
+  - id: design
+    generates: design.md
+    description: Optional technical decisions and cross-repository architecture
+    template: design.md
+    instruction: |
+      Create design.md only when the Change has non-trivial technical decisions,
+      cross-repository coordination, a new dependency, migration, security or
+      meaningful operational risk. Refine any design content pre-filled during
+      brainstorming rather than duplicating it.
+
+      Explain boundaries, contracts, decisions, alternatives and risks. Include a
+      Repository Implementation Map using only IDs accepted in Proposal Repository
+      Impact once Proposal exists; before then mark the map provisional and reconcile
+      it with the accepted Proposal before Tasks or Plan. Code inspection may validate
+      current state or feasibility; cite it as
+      evidence and do not turn implementation accidents into Requirements.
+    requires:
+      - brainstorm
+
+  - id: specs
+    generates: "specs/**/*.md"
+    description: Observable behavioral contract expressed as Delta Specs
+    template: spec.md
+    instruction: |
+      Use accepted planning sources and normative Store artifacts for this stage.
+      Do not inspect Code Repositories to formulate Proposal, Requirements or Scenarios.
+      Create one Delta Spec for every new or modified capability in proposal.md.
+      Requirements use SHALL or MUST and every Requirement has at least one level-4
+      Scenario with WHEN and THEN. MODIFIED contains the complete resulting
+      Requirement, not a partial diff. Preserve existing Scenario IDs and give new
+      Scenarios a stable change-id suffix. For new capabilities include a Purpose
+      section of at least 50 characters; omit it for existing capabilities.
+
+      Specs contain observable behavior, domain rules and public contracts only.
+      Do not include repository paths, internal symbols, libraries, storage details
+      or implementation steps discovered during brainstorming or code inspection.
+    requires:
+      - proposal
+
+  - id: tasks
+    generates: tasks.md
+    description: Coarse implementation and verification work grouped by repository
+    template: tasks.md
+    instruction: |
+      The project-designated Planning owner reads proposal.md, Delta Specs and optional design.md and creates
+      coarse-grained checkbox tasks grouped under headings containing the exact
+      Repository ID that owns the work. Each task states the required result and how
+      it will be checked. Do not introduce behavior outside the accepted Specs.
+
+      Use the Planning owner, required reviewers and acceptance gates declared in
+      openspec/process/quality-gates.md. Follow the project PR process in
+      openspec/process/release-process.md; do not infer roles from job titles.
+
+      Human Feature Acceptance belongs to the following Verify artifact, not to
+      implementation Tasks.
+    requires:
+      - specs
+
+  - id: plan
+    generates: plan.md
+    description: Repository-scoped micro-task plan using Superpowers writing-plans
+    template: plan.md
+    instruction: |
+      Invoke **superpowers:writing-plans** using tasks.md, Delta Specs and optional
+      design.md as input. Override its default output location: write the result only
+      to this Change's plan.md and do not create docs/superpowers/plans/.
+      Pass the Plan template and this execution handoff to the skill: the saved
+      Plan must identify this Change and direct a new executor to invoke the installed
+      native OpenSpec Apply through the Agent's skill/command mechanism. Preserve
+      this entrypoint instead of the skill's default direct-executor header.
+      Superpowers execution runs within Apply according to the current schema.
+
+      Separate the plan by exact Code Repository ID. For each repository include the
+      goal, dependencies, ordered 2-5 minute TDD steps, exact paths, commands and
+      expected results, review checkpoints, and traceability to coarse Tasks and
+      Requirements or Scenarios. Do not execute the plan, mutate repository state or
+      mark Tasks complete while producing this artifact.
+      After writing Plan, refresh get_next_action and hand off to Apply when its
+      prerequisites are complete. Do not suggest or create verify.md from Planning,
+      even if OpenSpec reports it ready. Continue/Fast-forward must stop at Apply.
+    requires:
+      - tasks
+
+  - id: verify
+    generates: verify.md
+    description: Universal human Feature Acceptance plus Superspec Process Compliance
+    template: verify.md
+    instruction: |
+      Account for every Scenario in the accepted Specs for this Change using the
+      template's shared scenario verification contract. Reference Scenario IDs or
+      exact source locations without copying their descriptions. Record the verified
+      candidate, requirements revision and verification conditions; link existing
+      records instead of duplicating them. A linked report may replace per-scenario
+      rows only when it identifies every result and the same candidate.
+      PASS requires executed evidence of expected behavior; violations are FAIL,
+      missing or stale evidence is PENDING, and N/A requires justified inapplicability.
+      Reconcile the full Scenario list before acceptance; omissions cannot pass.
+      Include cross-repository interactions when required by the accepted scenarios.
+      Map requirement-related findings from other verification tools to these results;
+      their summary or warning severity does not override the acceptance criteria.
+      Planning review alone cannot establish delivered Scenario PASS. Preserve the
+      schema's lifecycle and the project's human acceptance rules.
+      Write verify.md in Russian using the template's Russian headings. Preserve
+      command syntax, identifiers, status values and the contract markers.
+      Treat this artifact as a separate post-implementation gate: its availability in
+      the artifact graph is not proof that an Apply candidate exists and can never
+      justify PASS by itself.
+
+      Before creating or updating verify.md, including from Continue/Fast-forward,
+      read current Apply instructions. Require state: all_done with a positive task
+      total, complete equal to total and remaining: 0, plus an actual implementation
+      candidate and executed Apply checks. Completed checkboxes alone are not evidence.
+      If tasks are pending or reopened, return to Apply. If progress or the candidate
+      is unknown, resolve that uncertainty first. Do not create an empty or PENDING
+      Verify placeholder before Apply completes; preserve any existing file without
+      treating it as proof of completion. After Apply, collect current evidence and
+      keep the human decision PENDING until explicitly made.
+
+      First invoke **superpowers:verification-before-completion** for every affected
+      Code Repository. Run fresh commands from plan.md and record actual output; never
+      infer success from an earlier run or an agent claim. If a failure is unexpected,
+      invoke **superpowers:systematic-debugging**, return to Apply and preserve evidence.
+
+      Then invoke **openspec-verify-change** and fill the shared Feature Acceptance
+      evidence table. Present it for an explicit human decision. The Agent must keep
+      the Human gate `PENDING` until a person explicitly selects `PASS`
+      or `FAIL`; Agent evidence cannot make this decision. Follow the acceptance
+      contract defined in this schema's Verify template.
+
+      Separately record Superspec Process Compliance: Delta Spec sync and
+      Design/Specs coherence, clean implementation state, TDD evidence, task reviews,
+      final review and required Superpowers workflow evidence. Process Compliance is
+      PASS, PASS_WITH_WARNINGS or FAIL. Feature Acceptance PASS plus Process
+      Compliance PASS or PASS_WITH_WARNINGS completes Verify. Any failure returns to
+      the owning artifact or Apply, followed by a fresh Verify.
+
+      Verify does not perform Archive, UAT or Release. Human Feature Acceptance `PASS`
+      and accepted Process Compliance are required before the team archives the Change
+      through a Store PR.
+    requires:
+      - plan
+
+apply:
+  requires: [plan]
+  tracks: tasks.md
+  instruction: |
+    Use **superpowers:using-superpowers** to resolve every applicable skill before
+    action. Implement the accepted plan only in Code Repositories listed in Proposal
+    Repository Impact; the central Store owns artifacts and is not a code checkout.
+
+    Resolve exactly one existing Store task file from contextFiles.tasks; stop if
+    its identity is ambiguous. After verifying the selected task's result, update
+    only its checkbox using the Agent's file editor. Match the task to its full
+    description and repository section. A Store coordinator may record verified
+    Code Repository results without treating Store as an implementation repository.
+    Pending or blocked tasks remain unchecked. Re-read before editing, preserve task
+    descriptions, numbering and unrelated changes, verify the diff and refresh context.
+    Report access failures with the exact path and verified results for handoff,
+    without claiming progress was saved or creating a second tasks.md. Do not bypass
+    environment restrictions, change accepted Planning or commit/publish implicitly.
+
+    0. Scope and evidence preflight
+       - Resolve exact repository roots from the connected Orchestrator workspace.
+       - Confirm dependency order from plan.md. Independent repository scopes may use
+         **superpowers:dispatching-parallel-agents** only when they have no shared state,
+         ordering dependency or overlapping files; otherwise work sequentially.
+       - Confirm that the repository set matches the accepted Repository Impact and
+         repository sections in plan.md before implementation.
+
+    1. Isolated workspace
+       For every assigned Code Repository invoke **superpowers:using-git-worktrees**.
+       Keep each worktree inside its owning Code Repository. Reuse only a worktree whose
+       identity and branch match the current Change; do not create a worktree in Store.
+
+    2. Executor and TDD
+       Prefer **superpowers:subagent-driven-development** when fresh subagents are
+       available. It drives one plan task at a time and transitively requires
+       **superpowers:test-driven-development** and
+       **superpowers:requesting-code-review** after each task plus a final review.
+
+       If subagents are unavailable, invoke **superpowers:executing-plans** as fallback.
+       In that path invoke **superpowers:test-driven-development** explicitly for every
+       behavior change and **superpowers:requesting-code-review** after each coherent
+       batch and at the end. Preserve RED → GREEN → review; implementation written
+       before a failing test is not accepted as TDD evidence.
+
+       On any test failure, bug or unexpected behavior invoke
+       **superpowers:systematic-debugging** before proposing or applying a fix. When
+       review feedback is received invoke **superpowers:receiving-code-review** before
+       accepting it; verify technically instead of implementing by deference.
+
+    3. Repository completion
+       Before marking a repository result complete invoke
+       **superpowers:verification-before-completion** and run the exact fresh commands
+       from plan.md. Update only the coarse tasks whose observable repository result is
+       complete. Do not close a repository result from uncommitted work. Human Feature
+       Acceptance belongs to the following Verify artifact.
+
+    4. Completion and convergence
+       Do not create a separate Apply receipt. Keep tasks.md aligned with only the
+       repository results actually completed, return a concise summary with fresh
+       verification evidence and remaining work, then stop. The governed verify.md
+       gate is created separately after implementation. On FAIL return to the correct
+       skill-driven step, update implementation and tasks, and verify again.
+
+    Apply never grants implicit authority to publish branches, merge, deploy, release,
+    archive or mutate Store Git. A person invokes any required closeout command or
+    skill explicitly through the accepted team process.
