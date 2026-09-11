@@ -8,12 +8,9 @@ See `proposal.md` — Why, for motivation. Relevant current state:
 - The focus service already has the configured region value available
   internally (it is already used for its own bridge-selection logic); this
   Change only exposes it externally in the conference creation response.
-- jitsi-web already integrates with lib-jitsi-meet as a pinned dependency, and
-  the repository already has a convention for maintaining local patches on
-  top of pinned third-party dependencies for other libraries. No such patch
-  currently exists for lib-jitsi-meet specifically — this Change is expected
-  to introduce the first one, following that existing convention (see
-  Decisions and Open Questions).
+- jitsi-web integrates with a pinned lib-jitsi-meet release. The executable web
+  artifact is built by the lib-jitsi-meet repository, so parsing the new wire
+  property belongs in that repository rather than in a patch of generated code.
 - The web conference info bar already renders a small set of short,
   localized label items side by side; this Change adds one more, following
   that established pattern.
@@ -32,7 +29,7 @@ See `proposal.md` — Why, for motivation. Relevant current state:
 - Mapping the region value to a human-readable name, or mobile client parity
   (already excluded in `proposal.md`).
 - New backend logging or metrics for the region value beyond the automated
-  tests already planned in both repositories — this is a UI-only diagnostic
+  tests already planned in the affected repositories — this is a UI-only diagnostic
   aid, not a monitored operational signal, so no additional observability
   work is introduced.
 
@@ -80,26 +77,22 @@ See `proposal.md` — Why, for motivation. Relevant current state:
   already recorded in `proposal.md`; mobile parity, if wanted later, is a
   separate decision.
 
-- **jitsi-web's lib-jitsi-meet integration is adapted to surface
-  `focus-region`, following the repository's existing convention for
-  adapting pinned dependencies (already used for other libraries) — this
-  will be the first such adaptation applied to lib-jitsi-meet itself.** The
-  exact low-level mechanism is intentionally left to Tasks/Apply — see Open
-  Questions — since it does not change the observable behavior, the chosen
-  approach, or the task breakdown at this level.
+- **lib-jitsi-meet owns parsing and snapshot semantics.** It parses
+  `focus-region` and exposes a conference getter; jitsi-web only consumes that
+  public API. This avoids patching a generated minified dependency artifact.
 
 ## Repository Implementation Map
 
-Implementation order: either repository can be implemented and shipped
-first (see Migration Plan) — `jitsi-control`'s addition does not require a
-prior `jitsi-web` change, and vice versa, since the response already
-tolerates unrecognized optional properties and `jitsi-web` already treats
-an absent property as the hide-label case.
+Implementation order follows the contract: `jitsi-control` produces the optional
+property, lib-jitsi-meet parses and exposes it, and jitsi-web consumes the getter.
+`jitsi-control` can still ship independently because older clients ignore unknown
+optional properties.
 
 | Repository | Responsibility | Contracts and dependencies |
 | --- | --- | --- |
 | `jitsi-control` | Add the optional `focus-region` property to the conference creation response, populated with the configured region only when non-empty; cover both the presence and the absence case with backend tests. | Reads the already-available region configuration internally; extends the existing conference creation response contract with one new optional property; introduces no new inbound or outbound contract. |
-| `jitsi-web` | Read `focus-region` from the initial conference creation response through its lib-jitsi-meet integration, captured once and not updated on later focus migration; render it as a new, localized item in the existing web conference info bar; hide the item without an error when the value is absent, empty, or unparseable. | Depends on the extended conference creation response contract from `jitsi-control`; renders through the client's existing localization system; scoped to the web client only. |
+| `lib-jitsi-meet` | Parse `focus-region`, capture its value or absence once from the initial response, and expose it through the conference API. | Depends on the extended conference creation response contract from `jitsi-control`; supplies the value to `jitsi-web`. |
+| `jitsi-web` | Read the region through the lib-jitsi-meet conference API; render it as a new, localized item in the existing web conference info bar; hide the item without an error when the value is absent, empty, or unparseable. | Depends on the new lib-jitsi-meet getter; renders through the client's existing localization system; scoped to the web client only. |
 
 ## Risks / Trade-offs
 
@@ -108,12 +101,9 @@ an absent property as the hide-label case.
   Documented as an explicit, accepted design choice; if live accuracy is
   needed later, that is a separate follow-up Change, not a defect of this
   one.
-- [Risk] jitsi-web currently has no existing patch for lib-jitsi-meet;
-  introducing the first one carries some maintenance risk on future
-  dependency upgrades → [Mitigation] Keep the adaptation minimal (read one
-  additional property) to reduce patch surface and upgrade friction,
-  following the same convention already used for the repository's other
-  patched dependencies.
+- [Risk] jitsi-web can consume the new getter only after a lib-jitsi-meet build
+  containing it is available → [Mitigation] Preserve the current UI when the
+  getter or value is absent and verify the repositories together before release.
 - [Risk] Treating "unparseable value" the same as "absent" could hide a
   genuine backend/contract defect from operators, since no error is shown
   to end users → [Mitigation] Accepted for this Change per the explicit
@@ -126,19 +116,13 @@ an absent property as the hide-label case.
 - No data migration is required: the change is purely additive on the
   response contract (one new optional property) and purely additive on the
   UI (one new, conditionally shown label).
-- Rollout: `jitsi-control` and `jitsi-web` changes can ship independently in
-  either order. A `jitsi-web` build without this change simply ignores the
-  unrecognized property, consistent with the response already carrying
-  other optional properties today. A `jitsi-control` build without this
-  change simply keeps the property absent, which `jitsi-web` already
-  treats as the hide-label case.
-- Rollback: either repository can be rolled back independently, for the
-  same reason — no coordinated rollback step is required.
+- Rollout: `lib-jitsi-meet` must be released before jitsi-web updates its pinned
+  version. `jitsi-control` can ship independently: older clients ignore the
+  property, while the updated client hides the label when the property is absent.
+- Rollback: jitsi-web and `jitsi-control` remain independently rollback-safe;
+  rolling back the lib-jitsi-meet API requires also using a jitsi-web revision
+  that does not require the getter.
 
 ## Open Questions
 
-- The exact mechanism for adapting jitsi-web's lib-jitsi-meet integration
-  (for example, whether a new dependency patch must be introduced, or the
-  value can be surfaced without one) is left to be confirmed during
-  implementation. It does not change the specs, the chosen approach, or the
-  task breakdown at this level of granularity.
+Нет.
