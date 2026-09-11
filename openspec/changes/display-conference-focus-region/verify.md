@@ -40,7 +40,7 @@
 | --- | --- | --- |
 | `openspec validate display-conference-focus-region --strict` | `PASS` | Change прошёл строгую валидацию. |
 | Backend contract tests | `PASS` | `jitsi-control/.../ConferenceIqHandlerTest.kt`: заполненное, отсутствующее и пустое значения. |
-| lib-jitsi-meet lint and browser tests | `PASS` | ESLint и TypeScript без ошибок; native и polyfill suites — по 582 успешных теста. |
+| lib-jitsi-meet lint and browser tests | `PASS` | ESLint и TypeScript без ошибок; native и polyfill suites — по 620 успешных тестов. |
 | jitsi-web static checks | `PASS` | ESLint изменённых файлов, `tsc:web` и JSON parsing без ошибок. |
 
 <!-- SCENARIO_VERIFICATION_CONTRACT_V1_END -->

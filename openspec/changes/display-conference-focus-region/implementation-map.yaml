@@ -36,9 +36,11 @@ implementations:
     commits:
       - 1b47d8d038f763a49d4509bd9e90f55f9cac6be5
       - 33f6a34c9e9ac2b3dad30e0b673583942d19c637
-    summary: Свойство разбирается и доступно через API; browser tests проходят
+      - 09ecac9bde5652ac70050782fe3065516d83ee47
+    summary: Свойство разбирается и доступно через API; browser tests проходят после
+      синхронизации с master
     remaining: ""
-    version: 1
+    version: 2
   - repository_id: lib-jitsi-meet
     task:
       id: "4"
@@ -50,9 +52,11 @@ implementations:
     commits:
       - 1b47d8d038f763a49d4509bd9e90f55f9cac6be5
       - 33f6a34c9e9ac2b3dad30e0b673583942d19c637
-    summary: Snapshot semantics покрыты положительным и отрицательным browser-тестами
+      - 09ecac9bde5652ac70050782fe3065516d83ee47
+    summary: Первоначальное значение региона фиксируется и не меняется при повторных
+      ответах; browser tests проходят после синхронизации с master
     remaining: ""
-    version: 1
+    version: 2
   - repository_id: jitsi-web
     task:
       id: "5"
