@@ -30,6 +30,10 @@
       без интерактивности ([SC-CONFERENCE-REGION-DIAGNOSTICS-006]).
 - [x] 3.4 Не менять мобильные компоненты
       ([SC-CONFERENCE-REGION-DIAGNOSTICS-007]).
+- [ ] 3.5 После выпуска lib-jitsi-meet с новым getter обновить pinned-версию в
+      jitsi-web и повторить статические проверки
+      ([SC-CONFERENCE-REGION-DIAGNOSTICS-003],
+      [SC-CONFERENCE-REGION-DIAGNOSTICS-004]).
 
 Проверка: ESLint изменённых файлов, `tsc:web` и разбор изменённого JSON проходят.
 
@@ -40,4 +44,5 @@
       ([SC-CONFERENCE-REGION-DIAGNOSTICS-001]—
       [SC-CONFERENCE-REGION-DIAGNOSTICS-004]).
 
-Ручной запуск окружения исключён из текущего прогона по решению пользователя.
+Выпуск зависимости и ручной запуск окружения исключены из текущего прогона по
+решению пользователя.
