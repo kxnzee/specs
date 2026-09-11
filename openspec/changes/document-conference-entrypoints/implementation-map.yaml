@@ -1,0 +1,44 @@
+contract_version: 1
+change_id: document-conference-entrypoints
+attempts: []
+implementations:
+  - repository_id: jitsi-web
+    task:
+      id: "1"
+      description: 1.1 Add `doc/conference-entrypoint.md` documenting the client-side
+        function that starts a conference join and triggers the signaling
+        exchange with the focus service, and the failure branch triggered when
+        the focus service is unavailable. Confirm the current entry point and
+        failure-branch location by reading `conference.js` at Apply time
+        (Planning-time confirmation is recorded in `intake.md` §9 for reference,
+        but the published anchor must reflect current source) and cite its
+        file:line in the doc; verify by confirming the cited anchor matches
+        current source and the doc renders as valid markdown.
+    schema_name: spec-driven-extended
+    pull_request: https://github.com/kxnzee/jitsi-meet/pull/1
+    plan_url: https://github.com/kxnzee/jitsi-meet/pull/1
+    commits:
+      - 28f9bd63cb80a16e4985c7d6d3c644cabc412e71
+    summary: Merged client conference-entry documentation and its cross-repository link.
+    remaining: ""
+    version: 1
+  - repository_id: jitsi-control
+    task:
+      id: "3"
+      description: 2.1 Add `doc/conference-entrypoint.md` documenting the XMPP entry
+        point that receives the client's initial conference request and the step
+        that creates or looks up the resulting conference. Confirm the current
+        entry point location by reading the relevant source at Apply time
+        (Planning-time confirmation is recorded in `intake.md` §9 for reference,
+        but the published anchor must reflect current source) and cite its
+        file:line in the doc; verify by confirming the cited anchor matches
+        current source and the doc renders as valid markdown.
+    schema_name: spec-driven-extended
+    pull_request: https://github.com/kxnzee/jicofo/pull/1
+    plan_url: https://github.com/kxnzee/jicofo/pull/1
+    commits:
+      - e380c14a41078e7aa5b70933aab3f8ed48a0a298
+    summary: Merged focus-service conference-entry documentation and protocol
+      cross-links.
+    remaining: ""
+    version: 1
