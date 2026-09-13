@@ -1,0 +1,59 @@
+contract_version: 1
+change_id: display-conference-focus-region
+implementations:
+  - repository_id: jitsi-control
+    task_id: "1"
+    planning_revision: 5712d13b56e2e3baaaf31b3c2d9551c14dc99f0a
+    planning_fingerprint: f20f89ec4f2157d084ef332d4b45479bf9dfbdf1e102becf25374863f006ad6e
+    base_revision: 03ece5e4ee705c39e6e1e55d8ab50027065383cd
+    implementation_revision: 89b1529796eae619c3de786eb1f8c668c897b30e
+    state: partial
+  - repository_id: jitsi-control
+    task_id: "2"
+    planning_revision: 5712d13b56e2e3baaaf31b3c2d9551c14dc99f0a
+    planning_fingerprint: f20f89ec4f2157d084ef332d4b45479bf9dfbdf1e102becf25374863f006ad6e
+    base_revision: 03ece5e4ee705c39e6e1e55d8ab50027065383cd
+    implementation_revision: 89b1529796eae619c3de786eb1f8c668c897b30e
+    state: partial
+  - repository_id: jitsi-web
+    task_id: "5"
+    planning_revision: 5712d13b56e2e3baaaf31b3c2d9551c14dc99f0a
+    planning_fingerprint: f20f89ec4f2157d084ef332d4b45479bf9dfbdf1e102becf25374863f006ad6e
+    base_revision: 28f9bd63cb80a16e4985c7d6d3c644cabc412e71
+    implementation_revision: c9c0910031d4eecdc676c22a04c4427d48da5798
+    state: partial
+  - repository_id: jitsi-web
+    task_id: "6"
+    planning_revision: 5712d13b56e2e3baaaf31b3c2d9551c14dc99f0a
+    planning_fingerprint: f20f89ec4f2157d084ef332d4b45479bf9dfbdf1e102becf25374863f006ad6e
+    base_revision: 28f9bd63cb80a16e4985c7d6d3c644cabc412e71
+    implementation_revision: c9c0910031d4eecdc676c22a04c4427d48da5798
+    state: partial
+  - repository_id: jitsi-web
+    task_id: "7"
+    planning_revision: 5712d13b56e2e3baaaf31b3c2d9551c14dc99f0a
+    planning_fingerprint: f20f89ec4f2157d084ef332d4b45479bf9dfbdf1e102becf25374863f006ad6e
+    base_revision: 28f9bd63cb80a16e4985c7d6d3c644cabc412e71
+    implementation_revision: c9c0910031d4eecdc676c22a04c4427d48da5798
+    state: partial
+  - repository_id: jitsi-web
+    task_id: "8"
+    planning_revision: 5712d13b56e2e3baaaf31b3c2d9551c14dc99f0a
+    planning_fingerprint: f20f89ec4f2157d084ef332d4b45479bf9dfbdf1e102becf25374863f006ad6e
+    base_revision: 28f9bd63cb80a16e4985c7d6d3c644cabc412e71
+    implementation_revision: c9c0910031d4eecdc676c22a04c4427d48da5798
+    state: partial
+  - repository_id: lib-jitsi-meet
+    task_id: "3"
+    planning_revision: 5712d13b56e2e3baaaf31b3c2d9551c14dc99f0a
+    planning_fingerprint: f20f89ec4f2157d084ef332d4b45479bf9dfbdf1e102becf25374863f006ad6e
+    base_revision: b0fca5e55f3604e55ad82d04e36af5bf4d8fcebf
+    implementation_revision: 09ecac9bde5652ac70050782fe3065516d83ee47
+    state: partial
+  - repository_id: lib-jitsi-meet
+    task_id: "4"
+    planning_revision: 5712d13b56e2e3baaaf31b3c2d9551c14dc99f0a
+    planning_fingerprint: f20f89ec4f2157d084ef332d4b45479bf9dfbdf1e102becf25374863f006ad6e
+    base_revision: b0fca5e55f3604e55ad82d04e36af5bf4d8fcebf
+    implementation_revision: 09ecac9bde5652ac70050782fe3065516d83ee47
+    state: partial
