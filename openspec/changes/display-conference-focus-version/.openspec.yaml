@@ -1,0 +1,4 @@
+schema: superspec-multirepo
+created: 2026-09-14
+goal: Let a participant or support see the serving Focus (jitsi-control) version
+  from conference details, without server log access, when Jicofo publishes it.
