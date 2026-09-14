@@ -2,8 +2,8 @@
 
 `jitsi-control/doc/` and `jitsi-videobridge/doc/` already keep topic-scoped
 markdown files (e.g. `jitsi-control/doc/conference-request.md`,
-`jitsi-videobridge/doc/rest-colibri2.md`). `openspec/context/system-map.yaml`
-already records `jitsi-control -> jitsi-videobridge` as `type: media-control`
+`jitsi-videobridge/doc/rest-colibri2.md`). `openspec/context/03-architecture.md`
+already records `jitsi-control -> jitsi-videobridge` as a media-control relationship
 at a responsibility level (sources: `jitsi-control/README.md:19-20`,
 `jitsi-videobridge/doc/rest-colibri2.md:9-40`), without code-level anchors. See
 `proposal.md` - Why for the underlying motivation; no restatement here.

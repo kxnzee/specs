@@ -1,53 +1,21 @@
-# Инструкции для агента
+# Инструкции агента для Store
 
-## Контекст центрального Store
+Этот репозиторий — центральный OpenSpec Store со спецификациями и согласованными
+решениями проекта. Это не Code Repository и не репозиторий разработки Orchestrator.
 
-- Текущий репозиторий — центральный OpenSpec Store. Каталог `openspec/` является
-  источником истины для Specs и Changes; прикладной код находится в
-  зарегистрированных Code Repositories.
-- `openspec/context/` хранит подтверждённый долговечный контекст проекта, но не
-  заменяет Requirements и Delta Specs. Для его инициализации и актуализации вызывай
-  команду `/openspec-base-context`.
-- Для списка проверяемых тест-кейсов по конкретному Change используй project skill
-  `openspec-base-test-cases`.
-- Для проверки текущего Planning-артефакта и выбора минимального набора проверок
-  используй project skill `openspec-base-planning-check`; он маршрутизирует
-  специализированные skills и доступные read-only subagents по стадии и рискам.
-- Во время штатного `/opsx:apply` используй project skill
-  `openspec-base-apply-context`: при существующем Cycle он подтверждает текущий Code
-  Repository, проверяет planning revision и ограничивает Apply принадлежащими этому
-  репозиторию sections Tasks. Только при `CYCLE_NOT_FOUND` он предлагает standard
-  OpenSpec Apply без Orchestrator либо создание Cycle. Он не заменяет встроенный Apply.
-- Для анализа затронутых систем, capability, контрактов и проверок используй project
-  skill `openspec-base-analyze-impact`.
-- Для независимой проверки Proposal, Delta Specs, Design и Tasks перед Gate или PR
-  Review используй project skill `openspec-base-review-change`.
-- `openspec-orch.yaml` описывает конфигурацию Core и реестр репозиториев,
-  `.openspec-store/` — metadata Store.
-- Перед созданием или проверкой Change прочитай из `openspec-orch.yaml` точные
-  `repository-id` с role `code`, затем сопоставь их с
-  `openspec/context/system-map.yaml`. Техническое устройство, команды и инженерные
-  ограничения проверяй в checkout и `CLAUDE.md` соответствующего Code Repository;
-  не копируй их в центральный `openspec/context/`. В Proposal, Design и Tasks
-  разделяй влияние и evidence по этим id; Requirements и Scenarios оставляй
-  capability-oriented и не дублируй по репозиториям.
-- Если в исследуемом Code Repository есть актуальный `.codegraph/` и доступен MCP
-  server `codegraph`, сначала используй CodeGraph для навигации и только затем
-  адресное чтение недостающих источников. Его отсутствие не блокирует работу.
+Перед работой:
 
-## Постоянные ограничения
+1. Прочитай `openspec-orch.yaml`: там зарегистрированы Store, Code Repositories,
+   выбранный Agent, Extensions и Plugins.
+2. Начни с `openspec/context/00-start-here.md` и открывай только относящийся к задаче
+   бизнес-контекст. Материалы `_raw/` не являются подтверждёнными фактами.
+3. Для существующего Change определи точные ID и schema. Получи актуальные status,
+   инструкции артефакта и следующий шаг через Orchestrator MCP.
 
-- Создавай, изменяй и архивируй OpenSpec Changes только в центральном Store. Code Repositories реализуют существующие Changes и не создают собственные каталоги `openspec/changes/`.
-- Не изменяй штатные OpenSpec `openspec-*` skills и `opsx-*` commands, созданные
-  `openspec init`. Артефакты `openspec-base-*` принадлежат базовому Project Template.
-- Встроенный OpenSpec skill всегда остаётся владельцем workflow и артефактов. Нативные
-  project subagents используй только для ограниченного read-only исследования; они не
-  создают и не изменяют OpenSpec-артефакты или код.
-- Имена сабагентов базового Template, обслуживающих OpenSpec workflow, начинаются с
-  `openspec-base-`.
-  Профили без этого префикса являются общими project subagents и не получают
-  OpenSpec-роль автоматически.
-- Не считай вывод project skill решением Gate: approval принимает человек в
-  установленном процессом месте.
-- Не архивируй Change, пока не завершена реализация во всех затронутых Code
-  Repositories и не выполнена ручная проверка.
+Requirements, Master Specs и Changes находятся в `openspec/`. Правила и зависимости
+артефактов определяют `openspec/config.yaml`, schema выбранного Change и подключённые
+Extensions. Не смешивай их workflow и не угадывай следующий этап.
+
+Реализацию выполняй только в зарегистрированных Code Repositories. Не создавай там
+локальные `openspec/changes/`. Не придумывай роли, согласования, ветки или направления
+PR: используй только явно предоставленные правила проекта и полномочия пользователя.

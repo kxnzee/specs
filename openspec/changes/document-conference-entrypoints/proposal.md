@@ -2,7 +2,7 @@
 
 Developers investigating the client-to-focus boundary have no verified, code-anchored
 description of the conference entry path — only a responsibility-level link in
-`system-map.yaml`. This change adds verified developer documentation of that path so
+`openspec/context/03-architecture.md`. This change adds verified developer documentation of that path so
 contributors do not have to re-trace it from scratch. Observable runtime behavior does
 not change.
 
