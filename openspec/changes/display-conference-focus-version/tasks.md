@@ -1,6 +1,6 @@
 ## 1. `jitsi-control`
 
-- [ ] 1.1 Attach the existing public Focus version string as one optional
+- [x] 1.1 Attach the existing public Focus version string as one optional
       property on the conference-allocation success response, following the
       same optional-property pattern already used for other properties on
       that response. Required result: the response carries the property
@@ -12,7 +12,7 @@
       (SC-FOCUS-VERSION-002). Verify by: repository's local unit/integration
       test suite covering the conference-allocation response builder,
       asserting the new property is present with the expected value.
-- [ ] 1.2 Confirm no other conference-allocation response behavior changes
+- [x] 1.2 Confirm no other conference-allocation response behavior changes
       (existing properties, `ready`/`focusJid`/error handling unaffected).
       Verify by: repository's existing local test suite for the
       conference-allocation request/response path passes unmodified in

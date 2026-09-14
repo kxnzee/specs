@@ -1,0 +1,17 @@
+contract_version: 1
+change_id: display-conference-focus-version
+implementations:
+  - repository_id: jitsi-control
+    task_id: "1"
+    planning_revision: e8b6d75383cde676a1eebd6264aa56eab2a6f4f2
+    planning_fingerprint: d81514944f5187524fbc62888303c8bf200446122dc57f0850787bdc895db353
+    base_revision: 03ece5e4ee705c39e6e1e55d8ab50027065383cd
+    implementation_revision: 58420a865bd31861fdd75eab71e1e187adefebc0
+    state: complete
+  - repository_id: jitsi-control
+    task_id: "2"
+    planning_revision: e8b6d75383cde676a1eebd6264aa56eab2a6f4f2
+    planning_fingerprint: d81514944f5187524fbc62888303c8bf200446122dc57f0850787bdc895db353
+    base_revision: 03ece5e4ee705c39e6e1e55d8ab50027065383cd
+    implementation_revision: 58420a865bd31861fdd75eab71e1e187adefebc0
+    state: complete
