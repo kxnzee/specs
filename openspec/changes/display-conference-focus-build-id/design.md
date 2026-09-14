@@ -25,21 +25,23 @@
 а `jitsi-web` решает, показывать ли строку по нормативному условию из Specs.
 Между библиотекой и интерфейсом нет нового сетевого запроса.
 
-```mermaid
-sequenceDiagram
-    participant F as jitsi-control
-    participant X as XMPP room
-    participant L as lib-jitsi-meet
-    participant W as jitsi-web
-    F->>X: presence / conference-properties
-    X->>L: свойства текущей конференции
-    W->>L: прочитать свойство focus-build-id
-    L-->>W: строка или отсутствие значения
-    alt строка содержит непробельный символ
-        W->>W: показать исходное значение
-    else поле отсутствует или строка пустая/пробельная
-        W->>W: сохранить остальные строки без Focus build id
-    end
+```plantuml
+@startuml
+participant "jitsi-control" as F
+participant "XMPP room" as X
+participant "lib-jitsi-meet" as L
+participant "jitsi-web" as W
+
+F -> X: presence / conference-properties
+X -> L: свойства текущей конференции
+W -> L: прочитать свойство focus-build-id
+L --> W: строка или отсутствие значения
+alt строка содержит непробельный символ
+    W -> W: показать исходное значение
+else поле отсутствует или строка пустая/пробельная
+    W -> W: сохранить остальные строки без Focus build id
+end
+@enduml
 ```
 
 ## Interaction / API contracts
