@@ -39,8 +39,9 @@ expected_source: Maintained requirements or product documentation
 
 ## Границы и ограничения
 
-- Центральный Store координирует три Code Repository: `jitsi-web`, `jitsi-control` и
-  `jitsi-videobridge`. Их общие ответственности описаны в `system-map.yaml`.
+- Центральный Store координирует четыре Code Repository: `jitsi-web`, `lib-jitsi-meet`,
+  `jitsi-control` и `jitsi-videobridge`. Их общие ответственности описаны в
+  `system-map.yaml`.
 - Prosody, Jibri, Jigasi и `docker-jitsi-meet` участвуют в работе продукта, но не
   зарегистрированы как отдельные Code Repositories этого Store.
 - `jitsi-web` в рамках Repository impact охватывает пользовательские клиенты,
