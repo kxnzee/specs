@@ -28,6 +28,14 @@ repositories:
     plugins:
       - change-tracking
       - codegraph
+  - id: lib-jitsi-meet
+    roles:
+      - code
+    remote: https://github.com/kxnzee/lib-jitsi-meet.git
+    default_branch: master
+    plugins:
+      - change-tracking
+      - codegraph
   - id: jitsi-control
     roles:
       - code
