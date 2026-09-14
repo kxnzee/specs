@@ -1,3 +1,13 @@
+> **Correction note:** revised after a confirmed Apply-gap. The transport
+> named below when this Proposal was first accepted (Jicofo's
+> conference-allocation success response) does not reach
+> `JitsiConference.properties` in `lib-jitsi-meet`; the corrected transport
+> is Jicofo's existing focus-presence `ConferenceProperties`, already
+> relayed generically by `lib-jitsi-meet`. See design.md Context for the
+> evidence. Repository Impact and Capabilities are unaffected — the same
+> three repositories and the same capability are involved either way. No
+> application was started or run to produce this correction.
+
 ## Why
 
 Jicofo (the `jitsi-control` service that plays the domain "Focus" role: it
@@ -19,9 +29,9 @@ access.
 
 ## What Changes
 
-- Jicofo's conference-allocation success response can carry an optional
-  `focus-version` value, carrying its already-public version string. Older
-  or unmodified Jicofo instances that omit it are unaffected.
+- Jicofo's existing focus-presence `ConferenceProperties` can carry an
+  optional `focus-version` entry, carrying its already-public version
+  string. Older or unmodified Jicofo instances that omit it are unaffected.
 - `lib-jitsi-meet` retains the `focus-version` value, when provided, as part
   of the current conference's exposed properties.
 - `jitsi-web`'s conference details UI shows a "Focus version" row built
@@ -57,7 +67,7 @@ reproduces today's behavior (no "Focus version" row) exactly.
 
 ## Constraints and success criteria
 
-- The field is optional on the allocation response; an older or unmodified
+- The field is optional in the focus presence; an older or unmodified
   Jicofo that omits it must not break `lib-jitsi-meet` or `jitsi-web`, and
   must render no "Focus version" row and no error state — this is the
   expected default case, not an edge case.
@@ -70,8 +80,8 @@ reproduces today's behavior (no "Focus version" row) exactly.
 - Non-goal: new storage, logging, or analytics for the value beyond holding
   it as part of the current conference's in-memory state in
   `lib-jitsi-meet`.
-- Success is observed when: the conference-allocation success response can
-  carry `focus-version`; `lib-jitsi-meet` retains it for the current
+- Success is observed when: Jicofo's focus presence can carry
+  `focus-version`; `lib-jitsi-meet` retains it for the current
   conference; and `jitsi-web`'s conference details UI shows the "Focus
   version" row for all participants only when the value is present, with
   no row and no error state when it is absent.

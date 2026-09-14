@@ -1,3 +1,12 @@
+> **Correction note:** revised after a confirmed Apply-gap — the transport
+> accepted when 1.1/1.2 were implemented (conference-allocation IQ
+> response) does not reach `JitsiConference.properties` (see design.md
+> Context, Correction). 1.1 and 1.2 are kept below unchanged as the
+> historical record of what was actually implemented; 1.3/1.4 are the
+> follow-up correction. 2.1/2.2 are redirected from a `moderator.js` parser
+> change to a regression test of the existing generic presence
+> pass-through. No application was run to produce this correction.
+
 ## 1. `jitsi-control`
 
 - [x] 1.1 Attach the existing public Focus version string as one optional
@@ -17,40 +26,67 @@
       Verify by: repository's existing local test suite for the
       conference-allocation request/response path passes unmodified in
       assertions unrelated to this property.
+- [ ] 1.3 Follow-up correction: remove the `focus-version` property added
+      to the conference-allocation success response in 1.1 — this transport
+      does not reach `JitsiConference.properties` (see design.md Context,
+      Correction). Required result: the conference-allocation response no
+      longer carries `focus-version`; no other property on that response
+      changes. Traces to: `conference/focus-version-visibility` (corrected
+      transport). Verify by: repository's local test suite for
+      `ConferenceIqHandler` no longer asserting the property, and the
+      class's existing assertions otherwise unaffected.
+- [ ] 1.4 Add the already-public Focus version string as one entry on the
+      existing `ConferenceProperties` object that `JitsiMeetConferenceImpl`
+      already builds and publishes in the focus presence, following the
+      same pattern already used for that object's other entries. Required
+      result: the focus presence carries a `focus-version` conference
+      property when the conference is created/joined; no other entry on
+      `ConferenceProperties` or other presence content changes. Traces to:
+      `conference/focus-version-visibility` — SC-FOCUS-VERSION-001,
+      SC-FOCUS-VERSION-002. Verify by: repository's local unit/integration
+      test suite covering `JitsiMeetConferenceImpl`'s `ConferenceProperties`
+      construction/publication, asserting the new entry is present with the
+      expected value.
 
 ## 2. `lib-jitsi-meet`
 
-- [ ] 2.1 Parse the optional Focus-version property from the
-      conference-allocation response and expose it as a property of the
-      current conference, following the existing named-property parsing
-      pattern; absence of the property must not raise an error or change
-      any other parsed value. Required result: when the response contains
-      the property, the current conference's exposed properties include
-      it under a stable key; when absent, that key is simply not present.
-      Traces to: `conference/focus-version-visibility` — both
-      SC-FOCUS-VERSION-001 and SC-FOCUS-VERSION-002. Verify by: repository's
-      local unit test suite covering conference-allocation response
-      parsing, with cases for property present and property absent.
-- [ ] 2.2 Confirm the value is reachable through the conference's existing
-      property-read API without adding a new storage mechanism (in-memory
-      only, per Proposal Non-Goals) and without modifying
-      `_updateProperties`/`getProperty`, which are already key-agnostic.
-      Verify by: code inspection confirming `_updateProperties` assigns
-      whatever keys `_parseConferenceIq` produces (including
-      `focus-version` per 2.1) into `this.properties` unchanged, and that
-      `getProperty(key)` reads back from that same map with no key-specific
-      branching — no new test is needed for this generic pass-through
-      (`JitsiConference.spec.ts` has no existing properties-update pattern
-      to extend for this, and none is required since no code changes).
-- [ ] 2.3 Cross-repository contract check: verify `lib-jitsi-meet`'s parser
-      accepts the exact property name and value format emitted by
-      `jitsi-control` in task 1.1 (shared fixture or contract test using a
-      sample conference-allocation response payload). Evidence owner:
-      `lib-jitsi-meet` (it owns the parsing contract test). Traces to:
-      `conference/focus-version-visibility` — SC-FOCUS-VERSION-001. Verify
-      by: a contract-level test asserting `lib-jitsi-meet`'s parser, given
-      a fixture payload shaped like `jitsi-control`'s task 1.1 output,
-      produces the expected exposed property.
+- [ ] 2.1 Correction: no `moderator.js` parser change. Confirm, and add a
+      regression test for, the existing generic MUC presence
+      `conference-properties` pass-through in `ChatRoom` and
+      `JitsiConference`, which already carries arbitrary
+      presence-sourced properties into `JitsiConference.properties` with no
+      per-key allow-list. Required result: a test demonstrates that when the
+      focus presence carries a `focus-version` conference property (per
+      jitsi-control task 1.4), `JitsiConference.getProperty('focus-version')`
+      returns it; when the presence carries no such property, it is
+      `undefined`. This supersedes the original 2.1, which targeted parsing
+      the conference-allocation response in `moderator.js` — that transport
+      does not reach `JitsiConference.properties` (see design.md Context,
+      Correction), and any in-progress local change made against it should
+      not be carried forward. Traces to: `conference/focus-version-visibility`
+      — both SC-FOCUS-VERSION-001 and SC-FOCUS-VERSION-002. Verify by:
+      repository's local unit test suite covering presence-driven
+      `JitsiConference.properties` updates, with cases for the property
+      present and absent in presence.
+- [ ] 2.2 Confirm no new storage mechanism was introduced (in-memory only,
+      per Proposal Non-Goals) and that `_updateProperties`/`getProperty`
+      remain unchanged and key-agnostic. Verify by: code inspection
+      confirming `_updateProperties` assigns whatever keys the presence
+      `conference-properties` element carries (including `focus-version`
+      per 2.1) into `this.properties` unchanged, and that `getProperty(key)`
+      reads back from that same map with no key-specific branching — no
+      production code change is needed for this task, only the regression
+      test in 2.1.
+- [ ] 2.3 Cross-repository contract check: verify `lib-jitsi-meet`'s
+      presence-driven pass-through accepts the exact property name and
+      value format `jitsi-control` publishes in `ConferenceProperties`
+      (task 1.4) via a shared fixture or contract test using a sample focus
+      presence payload. Evidence owner: `lib-jitsi-meet` (it owns this
+      contract test). Traces to: `conference/focus-version-visibility` —
+      SC-FOCUS-VERSION-001. Verify by: a contract-level test asserting
+      that, given a fixture presence payload shaped like `jitsi-control`'s
+      task 1.4 output, `JitsiConference.properties` ends up with the
+      expected `focus-version` entry.
 
 ## 3. `jitsi-web`
 
@@ -102,11 +138,16 @@
       (present and absent cases) is deferred to Verify — no component/unit
       test harness exists for this area to automate the check (see 3.1).
 
-No application run is included in or required by these Planning tasks.
-`jitsi-control` and `lib-jitsi-meet` verification is each repository's
-local test suite (its existing runner/pattern) plus the cross-repository
-contract check owned by `lib-jitsi-meet` (2.3). `jitsi-web` has no
-component/unit test harness for `react/features`, so its tasks (3.1-3.4)
-are verified now by this repository's existing static checks, with manual
-UI confirmation — including the `jitsi-web`-owned contract check (3.4) —
-deferred to Verify; no application run happens during Planning or Apply.
+No application run is included in or required by these Planning tasks,
+including this correction. `jitsi-control` and `lib-jitsi-meet`
+verification is each repository's local test suite (its existing
+runner/pattern) plus the cross-repository contract check owned by
+`lib-jitsi-meet` (2.3). `jitsi-web` has no component/unit test harness for
+`react/features`, so its tasks (3.1-3.4) are verified now by this
+repository's existing static checks, with manual UI confirmation —
+including the `jitsi-web`-owned contract check (3.4) — deferred to Verify.
+1.1/1.2 are kept as the historical record of what was implemented under the
+originally accepted (now superseded) transport; 1.3/1.4 are the follow-up
+correction, and 2.1/2.2 have been redirected from a `moderator.js` parser
+change to a regression test of the existing generic presence pass-through.
+No application run happens during Planning or Apply.
