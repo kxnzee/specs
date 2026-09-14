@@ -1,3 +1,14 @@
+> **Correction note:** revised after a confirmed Apply-gap. The
+> conference-allocation IQ response (parsed by `lib-jitsi-meet`'s
+> `moderator.js`), assumed below as the transport when this artifact was
+> first approved, does not reach `JitsiConference.properties` —
+> `_handleSuccess` discards properties outside its own allow-list. The
+> working, already-generic transport is Jicofo's existing focus-presence
+> `ConferenceProperties`, relayed by `lib-jitsi-meet`'s `ChatRoom` into
+> `JitsiConference`. See design.md Context for the full
+> evidence. This correction was made from confirmed Apply evidence; no
+> application was started or run to produce it.
+
 ## Problem and success criteria
 
 Jicofo (the `jitsi-control` service that plays the domain "Focus" role per
@@ -86,10 +97,13 @@ conference details UI using this same conditional pattern.
 
 ## Key decisions
 
-- Candidate Repository Impact for Proposal: `jitsi-control` (Jicofo emits
-  `focus-version` in the conference-allocation success response),
-  `lib-jitsi-meet` (stores/exposes the value for the current conference),
-  `jitsi-web` (conditionally renders "Focus version" in conference details).
+- Candidate Repository Impact for Proposal: `jitsi-control` (Jicofo adds
+  `focus-version` to the `ConferenceProperties` it already publishes in the
+  focus presence — corrected from the originally assumed
+  conference-allocation success response, see Correction note above),
+  `lib-jitsi-meet` (already relays presence-sourced conference properties
+  into the current conference's exposed properties), `jitsi-web`
+  (conditionally renders "Focus version" in conference details).
   `jitsi-videobridge` is not impacted — "Focus" is the `jitsi-control` role,
   not the bridge, per `openspec/context/02-domain.md`.
 - The field carries an already-public version string and introduces no new
@@ -122,8 +136,10 @@ Remaining, non-blocking for Proposal:
 
 - The registered `jitsi-control`, `lib-jitsi-meet` and `jitsi-web` checkouts
   are available and were reachable via CodeGraph in this session, which
-  confirmed that a matching conference-allocation response path, a current-
-  conference properties store, and a conference-details UI surface exist in
-  each repository respectively. The exact response field shape on the
-  Jicofo side and the precise code paths to change remain to be pinned down
-  as current-state anchors during Design/Apply, not decided here.
+  confirmed that a conference-properties publication/consumption path, a
+  current-conference properties store, and a conference-details UI surface
+  exist in each repository respectively. The exact transport turned out to
+  matter (see Correction note above: the conference-allocation response
+  path does not reach `JitsiConference.properties`; the focus-presence
+  `ConferenceProperties` path does). The precise code paths to change
+  remain to be pinned down as current-state anchors during Apply.

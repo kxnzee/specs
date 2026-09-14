@@ -4,10 +4,21 @@
 > OpenSpec Apply и следуй актуальным инструкциям схемы. Superpowers executor
 > запускается внутри Apply по этим инструкциям. Создание Plan не запускает реализацию.
 
-**Goal:** Surface Jicofo's already-public Focus version through the existing
-conference-allocation response, `lib-jitsi-meet`'s conference properties, and
-`jitsi-web`'s conference details UI, visible to all participants only when
-the value is present.
+> **Correction note:** revised after a confirmed Apply-gap. The
+> `jitsi-control` and `lib-jitsi-meet` sections below replace the
+> originally accepted plan, which targeted the conference-allocation IQ
+> response and a `moderator.js` parser change — that transport does not
+> reach `JitsiConference.properties` (see design.md Context, Correction).
+> The `jitsi-web` section is unaffected and unchanged. This correction was
+> made from confirmed Apply evidence and targeted CodeGraph inspection,
+> without running the application. Apply must still verify the corrected
+> path with repository tests.
+
+**Goal:** Surface Jicofo's already-public Focus version through its
+existing focus-presence `ConferenceProperties`, `lib-jitsi-meet`'s existing
+generic presence pass-through into conference properties, and `jitsi-web`'s
+conference details UI, visible to all participants only when the value is
+present.
 
 **Accepted inputs:**
 - `openspec/changes/display-conference-focus-version/proposal.md`
@@ -20,130 +31,152 @@ the value is present.
 
 ## Repository: `jitsi-control`
 
-**Repository result:** The conference-allocation success response built by
-`ConferenceIqHandler.doHandleConferenceIq` carries an optional
-`focus-version` property whose value is `CurrentVersionImpl.VERSION.toString()`,
-with no other response field changed.
+**Repository result:** The focus presence Jicofo publishes via
+`JitsiMeetConferenceImpl` carries `focus-version` as one entry of its
+existing `ConferenceProperties`, with the value
+`CurrentVersionImpl.VERSION.toString()`. The `focus-version` property
+previously added to the conference-allocation success response (superseded
+transport) is removed; no other response field or presence content changes.
 
 **Depends on:** none (first hop; produces the value the other two
-repositories consume).
+repositories consume, now via focus presence instead of the
+conference-allocation response).
 
-### Task 1: Emit `focus-version` on the conference-allocation response
+### Task 1: Remove `focus-version` from the conference-allocation response (correction)
 
-**Traces to:** tasks.md 1.1, 1.2; specs SC-FOCUS-VERSION-001,
-SC-FOCUS-VERSION-002 (the property must be present when known and simply
-absent when not — no separate "unknown" branch is needed since Jicofo
-always knows its own version).
+**Traces to:** tasks.md 1.3; design.md Context, Correction (confirmed
+Apply-gap: this transport does not reach `JitsiConference.properties`).
 
 **Files:**
 - Modify: `jicofo/src/main/kotlin/org/jitsi/jicofo/xmpp/ConferenceIqHandler.kt:106-124`
-  (the `response = ConferenceIq().apply { ... }` block that already calls
-  `addProperty(ConferenceIq.Property("authentication", ...))` etc.)
-- Test: confirmed existing test location for `ConferenceIqHandler.kt` is
-  `jicofo/src/test/kotlin/org/jitsi/jicofo/ConferenceIqHandlerTest.kt`,
-  package/class `org.jitsi.jicofo.ConferenceIqHandlerTest` — this test
-  package is `org.jitsi.jicofo`, not `org.jitsi.jicofo.xmpp`, even though
-  the class under test lives in the `xmpp` subpackage; `ConferenceIqHandlerTest.kt`
-  already exists at that path — use it, do not create a new test class.
+  (the `response = ConferenceIq().apply { ... }` block; remove the
+  `addProperty(ConferenceIq.Property("focus-version", ...))` call added
+  under the original, now-superseded Plan)
+- Test: `jicofo/src/test/kotlin/org/jitsi/jicofo/ConferenceIqHandlerTest.kt`
+  (remove or update the assertion added for the superseded transport)
 
-- [ ] Step 1: In `ConferenceIqHandlerTest.kt`, write a failing test asserting
-      that the `ConferenceIq` response produced for a request includes a
-      `focus-version` property equal to `CurrentVersionImpl.VERSION.toString()`,
-      alongside the existing `authentication` property (to confirm no
-      existing property is removed or altered).
-- [ ] Step 2: Run the new test and confirm it fails because the property is
-      not yet emitted.
+- [ ] Step 1: In `ConferenceIqHandlerTest.kt`, find the assertion added
+      under the original Plan for the `focus-version` property on the
+      conference-allocation response, and remove it.
+- [ ] Step 2: In `ConferenceIqHandler.kt`, remove the
+      `addProperty(ConferenceIq.Property("focus-version", ...))` line added
+      under the original Plan; remove the now-unused `CurrentVersionImpl`
+      import from this file only if nothing else in the file still uses it.
+- [ ] Step 3: Run the class's test suite and confirm it passes with no
+      `focus-version` assertion remaining, and that all other existing
+      assertions are unaffected.
       Command: `mvn -pl jicofo -am -Dtest=ConferenceIqHandlerTest -Dsurefire.failIfNoSpecifiedTests=false test`
-      Expected: test run reports a failure for the new assertion (property
-      `focus-version` missing from the response), all other assertions in
-      the class unaffected.
-- [ ] Step 3: In `ConferenceIqHandler.kt`, inside the `response = ConferenceIq().apply { ... }`
-      block (same block that sets `focusJid` and the `authentication`
-      property), add:
-      `addProperty(ConferenceIq.Property("focus-version", CurrentVersionImpl.VERSION.toString()))`
-      Add the corresponding import for `CurrentVersionImpl`
-      (`org.jitsi.jicofo.version.CurrentVersionImpl`) if not already
-      imported in this file.
-- [ ] Step 4: Re-run the test and confirm it passes, and that the full
-      pre-existing test suite for this class still passes (no other
-      property assertions broke).
-      Command: `mvn -pl jicofo -am -Dtest=ConferenceIqHandlerTest -Dsurefire.failIfNoSpecifiedTests=false test`
-      Expected: all tests in the class pass, including the new one.
-- [ ] Step 5: Run the repository's CI-equivalent full verification as a regression check.
-      Command: `mvn verify -B -Pcoverage`
-      Expected: build succeeds, no new failures.
-- [ ] Step 6: Commit.
+      Expected: all tests pass; no `focus-version` property assertion
+      remains in the class.
+- [ ] Step 4: Commit.
       ```bash
       git add jicofo/src/main/kotlin/org/jitsi/jicofo/xmpp/ConferenceIqHandler.kt \
               jicofo/src/test/kotlin/org/jitsi/jicofo/ConferenceIqHandlerTest.kt
-      git commit -m "feat(jicofo): emit focus-version on conference-allocation response"
+      git commit -m "fix(jicofo): remove focus-version from conference-allocation response (superseded transport)"
       ```
 
-**Review checkpoint:** confirm the diff touches only the response-building
-block in `ConferenceIqHandler.kt` (no allocation, bridge-selection, or
-routing logic changed), matching design.md's "purely additive, optional
-data" risk assessment.
+**Review checkpoint:** confirm the diff only removes the property added
+under the superseded transport, with no other response field touched.
+
+### Task 2: Add `focus-version` to the focus-presence `ConferenceProperties`
+
+**Traces to:** tasks.md 1.4; specs SC-FOCUS-VERSION-001, SC-FOCUS-VERSION-002.
+
+**Files:**
+- Modify: `jicofo/src/main/java/org/jitsi/jicofo/conference/JitsiMeetConferenceImpl.java`
+  — `joinTheRoom()` builds the initial focus presence extensions and adds
+  `createConferenceProperties()` at lines 642-663; the helper is defined at
+  lines 722-727. Confirm these anchors are still current at Apply time.
+- Test: repository's existing test coverage for `ConferenceProperties`
+  and/or `JitsiMeetConferenceImpl`'s presence publication — exact test
+  class to confirm at Apply time alongside the file/line anchor above.
+
+- [ ] Step 1: Locate the exact construction site of `ConferenceProperties`
+      in `JitsiMeetConferenceImpl.java` and its existing test coverage;
+      confirm the pattern used for its other entries.
+- [ ] Step 2: Write a failing test asserting the published
+      `ConferenceProperties` includes a `focus-version` entry equal to
+      `CurrentVersionImpl.VERSION.toString()`, alongside its existing
+      entries (to confirm none is removed or altered).
+- [ ] Step 3: Run that test and confirm it fails because the entry is not
+      yet published.
+- [ ] Step 4: Add the `focus-version` entry to `ConferenceProperties`
+      following the pattern confirmed in Step 1.
+- [ ] Step 5: Re-run the test and confirm it passes, and that the
+      repository's existing test suite for this class/area still passes.
+- [ ] Step 6: Run the repository's CI-equivalent full verification as a
+      regression check.
+      Command: `mvn verify -B -Pcoverage`
+      Expected: build succeeds, no new failures.
+- [ ] Step 7: Commit.
+      ```bash
+      git commit -m "feat(jicofo): publish focus-version on focus presence ConferenceProperties"
+      ```
+      (stage the exact files touched in Steps 1-4, confirmed at Apply time)
+
+**Review checkpoint:** confirm the diff touches only the
+`ConferenceProperties` construction/publication path (no allocation,
+bridge-selection, or routing logic changed), matching design.md's "purely
+additive, optional data" risk assessment.
 
 ## Repository: `lib-jitsi-meet`
 
 **Repository result:** `JitsiConference.getProperty('focus-version')`
-returns the value from the conference-allocation response when
-`jitsi-control` sent it, and `undefined` when it did not — with no other
-parsed property affected either way.
+returns the value published in the focus presence by `jitsi-control` when
+present, and `undefined` when it is not — via the existing generic MUC
+presence `conference-properties` pass-through, with no parser or storage
+change and no other parsed/relayed property affected either way.
 
-**Depends on:** `jitsi-control` Task 1 (the property name and that its
-value is a plain string, not a boolean flag like sibling properties).
+**Depends on:** `jitsi-control` Task 2 (the property name and that its
+value is a plain string, published in the focus presence).
 
-### Task 1: Parse `focus-version` out of the conference-allocation response
+### Task 1: Regression-test the existing generic presence pass-through carries `focus-version`
 
-**Traces to:** tasks.md 2.1; specs SC-FOCUS-VERSION-001, SC-FOCUS-VERSION-002.
+**Traces to:** tasks.md 2.1, 2.2; specs SC-FOCUS-VERSION-001, SC-FOCUS-VERSION-002.
+Supersedes the original Task 1, which targeted parsing the
+conference-allocation response in `modules/xmpp/moderator.js` — that
+transport does not reach `JitsiConference.properties` (see design.md
+Context, Correction). Any in-progress local change made against
+`moderator.js` for this change should not be carried forward; it belongs to
+the superseded transport, not this corrected Plan.
 
 **Files:**
-- Modify: `modules/xmpp/moderator.js:261-291` (`_parseConferenceIq`, the
-  method that already reads `property[name="authentication"][value="true"]`
-  etc. via the file's existing `exists`/`findFirst`/`getAttribute` helpers)
-- Test: `modules/xmpp/moderator.spec.js` (existing test file covering
-  `Moderator`, confirmed by CodeGraph as the test for this class)
+- Reference (no change expected): `modules/xmpp/ChatRoom.ts:1123-1135`
+  parses `conference-properties` and emits `CONFERENCE_PROPERTIES_CHANGED`;
+  `JitsiConference.ts:673` binds that event directly to `_updateProperties`;
+  `JitsiConference.ts:2126-2184` implements `_updateProperties`, and
+  `JitsiConference.ts:4710-4712` implements `getProperty`.
+- Test: new or existing test file covering presence-driven
+  `JitsiConference.properties` updates — exact file to confirm at Apply
+  time (this Plan does not assume `moderator.spec.js`, since that file
+  covers the superseded IQ-parsing transport, not presence).
 
-- [ ] Step 1: In `modules/xmpp/moderator.spec.js`, write a failing test
-      calling `_parseConferenceIq` (or the public method that wraps it, per
-      the existing tests' convention in this file) with a fixture IQ result
-      containing `<property name="focus-version" value="1.1-123-abc1234"/>`,
-      asserting the returned `properties.focus-version` equals
-      `'1.1-123-abc1234'`. Add a second case with no such `<property>`
-      element, asserting `properties['focus-version']` is `undefined`.
-- [ ] Step 2: Run the native test suite (which includes
-      `moderator.spec.js`) and confirm both new cases fail (parser does not
-      yet read this property). `package.json`'s `test:native` script is
-      `karma start karma.conf.js`; there is no existing per-file filtering
-      to narrow this to a single spec file.
-      Command: `npm run test:native`
-      Expected: 2 new failing assertions in `moderator.spec.js`, existing
-      tests in the file and suite still pass.
-- [ ] Step 3: In `_parseConferenceIq`, add (mirroring the existing
-      `sipGatewayEnabled` check's use of `findFirst`/`getAttribute`, since
-      `focus-version` carries a variable string value rather than a fixed
-      `"true"` literal):
-      ```javascript
-      const focusVersionProperty = findFirst(
-          resultIq, ':scope>conference>property[name="focus-version"]');
-
-      if (focusVersionProperty) {
-          conferenceRequest.properties['focus-version']
-              = getAttribute(focusVersionProperty, 'value');
-      }
-      ```
-      placed alongside the other `conferenceRequest.properties.*` checks in
-      the same method, before the `return conferenceRequest;` line.
-- [ ] Step 4: Re-run the native test suite and confirm all cases pass.
-      Command: `npm run test:native`
-      Expected: all tests pass, including the 2 new cases in
-      `moderator.spec.js`.
-- [ ] Step 5: Commit.
+- [ ] Step 1: Locate the existing test coverage (if any) for MUC presence
+      `conference-properties` being relayed into `JitsiConference.properties`
+      via `ChatRoom` / `JitsiConference` / `_updateProperties`.
+- [ ] Step 2: Write a failing (or new, if no such coverage exists) test
+      asserting that when a fixture focus presence carries a
+      `focus-version` conference property, `JitsiConference.getProperty('focus-version')`
+      returns its value; and a case with no such property in presence,
+      asserting the same call returns `undefined`.
+- [ ] Step 3: Run the test and confirm the new cases pass against the
+      existing generic pass-through with no production code change — per
+      design.md, `_updateProperties`/`getProperty` are already key-agnostic.
+      If either case fails, that contradicts design.md's Correction and
+      must be treated as a new current-state finding, not patched silently:
+      stop and re-open Design before proceeding.
+- [ ] Step 4: Commit.
       ```bash
-      git add modules/xmpp/moderator.js modules/xmpp/moderator.spec.js
-      git commit -m "feat(xmpp): parse focus-version conference property"
+      git commit -m "test(xmpp): regression-test focus-version over existing presence pass-through"
       ```
+      (stage the exact test file(s) touched in Steps 1-2, confirmed at
+      Apply time)
+
+**Review checkpoint:** confirm no production code changed in this
+repository for this task (Proposal Non-Goal: no new storage; Design
+Correction: no parser change), and that the new test fixture's presence
+payload matches the exact key and value format `jitsi-control` publishes in
+Task 2 above.
 
 ### Task 2: Confirm end-to-end exposure via `JitsiConference.getProperty`
 
@@ -151,31 +184,23 @@ value is a plain string, not a boolean flag like sibling properties).
 
 **Files:**
 - Reference (no change expected): `JitsiConference.ts:2126-2184`
-  (`_updateProperties`, the single place that assigns `this.properties` and
-  emits `PROPERTIES_CHANGED`) and `JitsiConference.ts:4710-4712`
-  (`getProperty`)
-
-`JitsiConference.spec.ts` has no existing properties-update test pattern to
-extend for this, and `_updateProperties`/`getProperty` are already
-key-agnostic (they operate on whatever keys `_parseConferenceIq` produces,
-with no per-key branching) — so this confirmation is code inspection, not a
-new test. Task 1's fixture-based parser test already exercises
-`focus-version` flowing into `conferenceRequest.properties`.
+  (`_updateProperties`) and `JitsiConference.ts:4710-4712` (`getProperty`)
 
 - [ ] Step 1: Read `_updateProperties` (`JitsiConference.ts:2126-2184`) and
       `getProperty` (`JitsiConference.ts:4710-4712`) and confirm neither
       contains key-specific logic that would need to special-case
-      `focus-version` — both should already treat every key in the parsed
-      properties object generically.
+      `focus-version` — both should already treat every key in the
+      presence-sourced properties object generically.
 - [ ] Step 2: If Step 1 finds key-specific logic that would reject or drop
       `focus-version` (unexpected per design.md), fix it and add a
       regression test at that point, then commit alongside that fix.
-      Otherwise, no production code or test change is needed for this task.
+      Otherwise, no production code or test change is needed for this task
+      beyond Task 1's regression test.
 
 **Review checkpoint:** confirm no new storage mechanism was introduced
 (Proposal Non-Goal) — the value must live only in the existing
 `properties` map — and confirm `_updateProperties`/`getProperty` were left
-unchanged (Step 1 found them already generic).
+unchanged.
 
 ## Repository: `jitsi-web`
 
@@ -285,31 +310,37 @@ the dependency order of the sections above.
 repository-local tasks above are complete):
 
 - **2.3, owned by `lib-jitsi-meet`:** a contract-level test asserting that
-  `lib-jitsi-meet`'s `_parseConferenceIq` (Task 1 above), given a fixture
-  IQ payload shaped exactly like `jitsi-control`'s `ConferenceIqHandler`
-  output from Task 1 (property name `focus-version`, value format
+  `lib-jitsi-meet`'s existing generic presence pass-through (lib-jitsi-meet
+  Task 1 above), given a fixture focus presence payload shaped exactly like
+  `jitsi-control`'s `ConferenceProperties` output from jitsi-control Task 2
+  (property name `focus-version`, value format
   `CurrentVersionImpl.VERSION.toString()`, e.g. `'1.1-123-abc1234'`),
-  produces the expected `properties['focus-version']`. Add this fixture
-  next to the existing fixtures already used in `modules/xmpp/moderator.spec.js`.
-  There is no existing per-test filtering for the `test:native` Karma
-  script, so this case runs as part of the same full-suite command as
-  Task 1's cases.
-  Command: `npm run test:native`
+  produces the expected `JitsiConference.getProperty('focus-version')`. Add
+  this fixture next to whichever existing presence-fixture test file is
+  confirmed in lib-jitsi-meet Task 1 Step 1 — not `modules/xmpp/moderator.spec.js`,
+  which covers the superseded IQ-parsing transport.
+  Command: this repository's native test command (confirm the exact script
+  covering the chosen test file at Apply time; historically
+  `npm run test:native`).
   Expected: pass, including this fixture case.
 - **3.4, owned by `jitsi-web`:** code review confirming the literal key
   string `'focus-version'` passed to `getProperty` inside
-  `FocusVersionLabel` (Task 1 above) matches the key `lib-jitsi-meet`
-  exposes per the `lib-jitsi-meet` contract check above, plus manual
-  confirmation in the running app (present and absent cases) deferred to
-  Verify — no component/unit test harness exists in this repository to
-  automate this check (see Task 1 above).
+  `FocusVersionLabel` (jitsi-web Task 1 above) matches the key
+  `lib-jitsi-meet` exposes per the `lib-jitsi-meet` contract check above,
+  plus manual confirmation in the running app (present and absent cases)
+  deferred to Verify — no component/unit test harness exists in this
+  repository to automate this check (see jitsi-web Task 1 above).
 
 No step in this Plan starts, builds, or manually exercises the running
-application. `jitsi-control` and `lib-jitsi-meet` verification is each
+application — including this correction, which was made from confirmed
+Apply evidence without running the application or performing new code
+exploration. `jitsi-control` and `lib-jitsi-meet` verification is each
 repository's existing local test suite (via its existing runner/pattern)
 plus the `lib-jitsi-meet`-owned contract check (2.3). `jitsi-web` has no
 component/unit test harness for `react/features`, so its verification here
 is limited to this repository's existing static checks (type-check, lint);
 manual UI confirmation of all `jitsi-web` requirements — including the
 `jitsi-web`-owned contract check (3.4) — is deferred to Verify, per
-tasks.md.
+tasks.md. `jitsi-control` Task 1 and `lib-jitsi-meet` Task 1 exact
+file/line anchors for the corrected presence-based transport remain to be
+confirmed as the first step of their respective Apply work.
