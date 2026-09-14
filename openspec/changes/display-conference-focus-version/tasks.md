@@ -26,7 +26,7 @@
       Verify by: repository's existing local test suite for the
       conference-allocation request/response path passes unmodified in
       assertions unrelated to this property.
-- [ ] 1.3 Follow-up correction: remove the `focus-version` property added
+- [x] 1.3 Follow-up correction: remove the `focus-version` property added
       to the conference-allocation success response in 1.1 — this transport
       does not reach `JitsiConference.properties` (see design.md Context,
       Correction). Required result: the conference-allocation response no
