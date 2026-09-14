@@ -1,8 +1,21 @@
 # OpenSpec Orchestrator local data. Do not ignore openspec/, the provider-specific agent directory,
-# .openspec-orch/changes/ (Cycle Records, committed to Git), or .openspec-orch/ as a whole.
+# or .openspec-orch/ as a whole.
 .openspec-orch/state.json
 .openspec-orch/cache/
+.openspec-orch/packages/node_modules/
 .openspec-orch/logs/
+.openspec-orch/plugins/
 
 # Local credentials
 .openspec-orch/credentials/
+
+# Agent-local approvals
+.claude/settings.local.json
+
+# Gigacode settings
+.gigacode/settings*
+
+# Agent runtime caches
+.gigacode/tmp/
+.qwen/tmp/
+nul

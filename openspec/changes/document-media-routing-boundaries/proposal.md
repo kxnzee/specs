@@ -3,7 +3,7 @@
 Contributors and incident responders working across the `jitsi-control`
 (Jicofo) and `jitsi-videobridge` (JVB) boundary have no verified, code-anchored
 description of how a conference selects a bridge and how conference-control
-commands (create/modify) reach that bridge. `openspec/context/system-map.yaml`
+commands (create/modify) reach that bridge. `openspec/context/03-architecture.md`
 records the relationship only at responsibility level
 (`jitsi-control -> jitsi-videobridge`, `type: media-control`), without code
 anchors. This change adds verified developer documentation of that control

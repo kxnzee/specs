@@ -14,8 +14,8 @@
 предоставлена и не требуется для этого технического изменения.
 
 Дополнительные материалы:
-- `openspec/context/system-map.yaml` — уже фиксирует связь `jitsi-web → jitsi-control`
-  (`type: conference-control`) на уровне ответственности, без точных code-anchors.
+- `openspec/context/03-architecture.md` — уже фиксирует связь `jitsi-web → jitsi-control`
+  на уровне ответственности, без точных code-anchors.
 - Evidence CodeGraph, собранный в этой сессии через `openspec-orch plugin exec codegraph
   explore/query` для `jitsi-web` и `jitsi-control` (раздел 9).
 
@@ -27,8 +27,9 @@
 границе клиент/фокус-сервис, не имеют проверенного описания пути входа в
 конференцию: какой код в `jitsi-web` инициирует подключение, как он передаёт
 запрос в `jitsi-control` (Jicofo) и какой код в `jitsi-control` принимает этот
-запрос. Существующий `system-map.yaml` называет связь на уровне ответственности,
-но не даёт code-level точки входа и не подтверждён построчным чтением исходников.
+запрос. Существующий `openspec/context/03-architecture.md` называет связь на уровне
+ответственности, но не даёт code-level точки входа и не подтверждён построчным
+чтением исходников.
 
 Ожидаемый результат — в `jitsi-web` и `jitsi-control` появляется документация
 (markdown в соответствующем репозитории), которая точно называет функции/классы
@@ -114,7 +115,7 @@ markdown-документ, который называет точную вход
 конференцию и не вводит неподтверждённых участников (например, конкретный XMPP
 MUC-сервис как отдельный компонент не detalizируется, так как код клиента и
 Jicofo взаимодействует с ним как с внешней системой `xmpp-signaling`, уже
-зарегистрированной в `system-map.yaml`).
+упомянутой в `openspec/context/03-architecture.md`).
 
 ```plantuml
 @startuml
@@ -188,9 +189,8 @@ end
 - `FocusManager.conferenceRequest` (`FocusManager.kt:88`) — шаг создания/поиска
   конференции, вызывается из `ConferenceIqHandler` — раздел 2.2, источник
   CodeGraph explore `jitsi-control`.
-- `system-map.yaml` уже фиксирует связь `jitsi-web → jitsi-control` типа
-  `conference-control` на уровне ответственности (без построчных anchors) —
-  раздел 1.
+- `openspec/context/03-architecture.md` уже фиксирует связь `jitsi-web → jitsi-control`
+  на уровне ответственности (без построчных anchors) — раздел 1.
 
 ### Предположения
 
@@ -249,7 +249,7 @@ not_required — пользователь подтвердил repository impact
   create/join a JitsiMeetConference and how it relates to ConferenceRequest and
   the XMPP IQ handler", вызван через
   `openspec-orch plugin exec --repo jitsi-control codegraph explore`.
-- `openspec/context/system-map.yaml:65-70` — существующая связь
+- `openspec/context/03-architecture.md` — существующая связь
   `jitsi-web → jitsi-control`.
 
 ## 11. Готовность к следующему шагу
