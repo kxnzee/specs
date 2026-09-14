@@ -16,16 +16,6 @@ repositories:
       - ../src/jitsi-web/README.md:1-4
       - ../src/jitsi-web/modules/API/external/index.js:1-3
 
-  - id: lib-jitsi-meet
-    responsibilities:
-      - Клиентская XMPP-сигнализация от имени jitsi-web (подключение, запрос конференции)
-      - Управление WebRTC/Jingle медиасессией клиента (JVB и P2P Jingle-сессии)
-    systems: [xmpp-signaling]
-    sources:
-      - ../src/lib-jitsi-meet/JitsiConnection.ts:108-122
-      - ../src/lib-jitsi-meet/modules/xmpp/moderator.js:301-319
-      - ../src/lib-jitsi-meet/JitsiConference.ts:354-379
-
   - id: jitsi-control
     responsibilities:
       - Координация конференции и участников
@@ -93,33 +83,3 @@ relationships:
     contract: Клиент передаёт и получает медиапотоки через выбранный медиамост.
     sources:
       - ../src/jitsi-videobridge/doc/web-sockets.md:6-19
-
-  - from: jitsi-web
-    to: lib-jitsi-meet
-    type: library-dependency
-    contract: >
-      jitsi-web встраивает lib-jitsi-meet как клиентскую библиотеку. На native
-      она подключается как npm-пакет; на web используется UMD-сборка того же
-      пакета, копируемая в деплой и загружаемая как глобальный скрипт.
-    sources:
-      - ../src/jitsi-web/react/features/base/lib-jitsi-meet/_.native.ts:1-8
-      - ../src/jitsi-web/react/features/base/lib-jitsi-meet/_.web.ts:1-4
-      - ../src/jitsi-web/Makefile:4
-      - ../src/jitsi-web/Makefile:67-70
-
-  - from: lib-jitsi-meet
-    to: xmpp-signaling
-    type: signaling
-    contract: Библиотека выполняет сигнальное взаимодействие (подключение, запрос конференции) от имени клиента jitsi-web.
-    sources:
-      - ../src/lib-jitsi-meet/JitsiConnection.ts:108-122
-
-  - from: lib-jitsi-meet
-    to: jitsi-control
-    type: conference-control
-    contract: >
-      Библиотека отправляет управляющей системе XMPP IQ с запросом на
-      создание или подключение к конференции.
-    sources:
-      - ../src/lib-jitsi-meet/modules/xmpp/moderator.js:301-319
-      - ../src/jitsi-control/jicofo/src/main/kotlin/org/jitsi/jicofo/xmpp/ConferenceIqHandler.kt:47-57
