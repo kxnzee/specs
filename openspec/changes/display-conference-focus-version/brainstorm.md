@@ -76,10 +76,13 @@ version directly from the conference details UI, without server log access.
 
 ## Agreed approach
 
-Pending human approval for this smoke test (see Open questions): Alternative
-B — conditional rendering, no placeholder — is recommended as the closest
-match to the explicit requirement and value statement supplied for this
-change.
+Approved by the human owner: Alternative B — conditional rendering, no
+placeholder. The "Focus version" row is included in `jitsi-web`'s
+conference details UI only when `lib-jitsi-meet` exposes a `focus-version`
+value for the current conference; when the value is absent, the row is
+omitted entirely (no placeholder, no error state). No alternative UX,
+naming, or placement was requested — the row is added to the existing
+conference details UI using this same conditional pattern.
 
 ## Key decisions
 
@@ -92,26 +95,31 @@ change.
 - The field carries an already-public version string and introduces no new
   negotiation/capability data, so it does not trigger the
   `openspec/context/05-constraints.md` human-review condition for
-  authentication/security-contract changes specifically. It is still a new
-  surfacing of diagnostic metadata to participants and support in the UI;
-  whether that disclosure and its audience are acceptable is a separate
-  human decision, not settled by this brainstorm (see Open questions).
+  authentication/security-contract changes specifically.
+- Approved audience and disclosure: the "Focus version" row is
+  participant-facing — visible to all participants in the conference
+  details UI, not restricted to moderators or support. The human owner
+  accepted surfacing this already-public value at that audience for this
+  change; `05-constraints.md`'s broader, product-wide conference-metadata
+  classification remains an open TODO unrelated to this change's scope and
+  is not resolved by this decision.
 - Absence of `focus-version` is the expected default case and must render no
   row and no error state in `jitsi-web`, not a placeholder.
 
 ## Open questions
 
-- Approve Alternative B (conditional row, no placeholder) as the agreed
-  approach, or prefer different UX (naming, placement within conference
-  details) — human decision required before Proposal.
-- Is it acceptable to surface Jicofo's Focus version as new diagnostic
+Both decisions previously pending human approval are resolved (see Agreed
+approach and Key decisions above):
+
+- ~~Approve Alternative B (conditional row, no placeholder) as the agreed
+  approach, or prefer different UX~~ — resolved: Alternative B approved as
+  specified, no alternative UX requested.
+- ~~Is it acceptable to surface Jicofo's Focus version as new diagnostic
   metadata in the participant-facing conference details UI, and to which
-  audience (all participants, or only moderators/support)? This is a
-  distinct disclosure question from "is the version itself already public"
-  — `openspec/context/05-constraints.md` leaves conference-metadata
-  classification unresolved, so this change cannot assume no
-  security/privacy review is warranted. Human decision required before
-  Proposal.
+  audience~~ — resolved: acceptable, audience is all participants.
+
+Remaining, non-blocking for Proposal:
+
 - The registered `jitsi-control`, `lib-jitsi-meet` and `jitsi-web` checkouts
   are available and were reachable via CodeGraph in this session, which
   confirmed that a matching conference-allocation response path, a current-
