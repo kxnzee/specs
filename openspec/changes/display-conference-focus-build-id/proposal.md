@@ -3,19 +3,18 @@
 Support engineers investigating conference issues need the exact build
 identifier of the serving Focus (`jitsi-control`, the Jicofo role) to confirm
 whether a specific fix is present, but today Conference info shows nothing
-like it. This is also a second synthetic multi-repository pilot, reusing the
-same three-repository shape and the same confirmed `ConferenceProperties`
-presence path already established by the accepted `display-conference-focus-version`
-change, to validate the spec-driven-extended workflow on a new end-to-end
-example. Why now: it is a small, additive change to an already-established
-transport and pass-through, with no new mechanism to design.
+like it. Showing the identifier in Conference info would make it available
+to the participant helping support investigate the issue.
 
 ## What Changes
 
 - `jitsi-control`'s existing focus-presence `ConferenceProperties` object
   (already built and published by `JitsiMeetConferenceImpl`) can carry an
-  additional optional `focus-build-id` entry, carrying Jicofo's already-public
-  build identifier. The accepted `display-conference-focus-version` Change
+  additional optional `focus-build-id` entry, carrying a public Jicofo build
+  identifier. Design must confirm the existing source and suitability for public
+  display; this remains an open question in Intake §9, not a verified runtime
+  fact. This clarification follows the Intake review and preserves the intended
+  public nature of the value. The accepted `display-conference-focus-version` Change
   chose the same transport, but its open implementation work is not treated as
   a current runtime fact. Older or unmodified Jicofo instances that omit the
   new property are unaffected.
