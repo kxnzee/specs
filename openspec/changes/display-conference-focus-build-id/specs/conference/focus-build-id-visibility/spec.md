@@ -17,9 +17,27 @@ its content.
 #### Scenario: Current conference has a known Focus build id — display-conference-focus-build-id-001
 
 - **WHEN** a participant views Conference info for a conference whose
-  focus-build-id value is `build-2026.09+sha.abc123`
+  focus-build-id value is `build-2026.09`
 - **THEN** Conference info shows a "Focus build id" row containing that
   exact value without changing its content
+
+#### Scenario: Non-blank value retains surrounding whitespace — display-conference-focus-build-id-006
+
+- **WHEN** the current conference provides the non-blank value `"  build-2026.09  "`
+  and a participant views Conference info
+- **THEN** the row uses that original string, without trimming it for display
+
+### Requirement: Long Focus build ids use the existing presentation
+
+The system SHALL display long non-blank Focus build ids using the existing
+Conference info presentation, without introducing custom truncation for this field.
+
+#### Scenario: A participant views a long Focus build id — display-conference-focus-build-id-007
+
+- **WHEN** the current conference provides a long non-blank Focus build id and
+  a participant views Conference info
+- **THEN** the row uses the existing Conference info presentation and does not
+  add custom truncation of the provided value
 
 ### Requirement: Conference info omits the Focus build id row when the value is not provided
 
@@ -67,6 +85,6 @@ or support roles.
 #### Scenario: Non-moderator participant views Conference info with a known Focus build id — display-conference-focus-build-id-004
 
 - **WHEN** a participant without the moderator role views Conference info
-  for a conference whose focus-build-id value has been provided
+  for a conference whose focus-build-id value contains a non-whitespace character
 - **THEN** the "Focus build id" row is shown to them the same as it would be
   to a moderator
