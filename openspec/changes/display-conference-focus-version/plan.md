@@ -53,7 +53,7 @@ always knows its own version).
       existing property is removed or altered).
 - [ ] Step 2: Run the new test and confirm it fails because the property is
       not yet emitted.
-      Command: `./gradlew :jicofo:test --tests "org.jitsi.jicofo.ConferenceIqHandlerTest"`
+      Command: `mvn -pl jicofo -am -Dtest=ConferenceIqHandlerTest -Dsurefire.failIfNoSpecifiedTests=false test`
       Expected: test run reports a failure for the new assertion (property
       `focus-version` missing from the response), all other assertions in
       the class unaffected.
@@ -67,10 +67,10 @@ always knows its own version).
 - [ ] Step 4: Re-run the test and confirm it passes, and that the full
       pre-existing test suite for this class still passes (no other
       property assertions broke).
-      Command: `./gradlew :jicofo:test --tests "org.jitsi.jicofo.ConferenceIqHandlerTest"`
+      Command: `mvn -pl jicofo -am -Dtest=ConferenceIqHandlerTest -Dsurefire.failIfNoSpecifiedTests=false test`
       Expected: all tests in the class pass, including the new one.
-- [ ] Step 5: Run the module's full local test suite as a regression check.
-      Command: `./gradlew :jicofo:test`
+- [ ] Step 5: Run the repository's CI-equivalent full verification as a regression check.
+      Command: `mvn verify -B -Pcoverage`
       Expected: build succeeds, no new failures.
 - [ ] Step 6: Commit.
       ```bash
