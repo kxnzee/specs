@@ -9,28 +9,37 @@ build without needing server log access.
 
 ### Requirement: Conference info shows the Focus build id when known
 
-The system SHALL show a "Focus build id" row in Conference info, built from
-the focus-build-id value associated with the current conference, whenever
-that value has been provided.
+The system SHALL show a "Focus build id" row in Conference info whenever the
+focus-build-id value associated with the current conference contains at least
+one non-whitespace character. The system SHALL show that value without changing
+its content.
 
 #### Scenario: Current conference has a known Focus build id — display-conference-focus-build-id-001
 
 - **WHEN** a participant views Conference info for a conference whose
-  focus-build-id value has been provided
+  focus-build-id value is `build-2026.09+sha.abc123`
 - **THEN** Conference info shows a "Focus build id" row containing that
-  value
+  exact value without changing its content
 
 ### Requirement: Conference info omits the Focus build id row when the value is not provided
 
 The system SHALL NOT show a "Focus build id" row, a placeholder value, or an
 error state in Conference info when the focus-build-id value has not been
-provided for the current conference; the rest of Conference info SHALL
-remain available.
+provided, is empty, or contains only whitespace; the rest of Conference info
+SHALL remain available.
 
 #### Scenario: Current conference has no focus-build-id value — display-conference-focus-build-id-002
 
 - **WHEN** a participant views Conference info for a conference whose
   focus-build-id value has not been provided
+- **THEN** Conference info shows no "Focus build id" row, no placeholder
+  text, and no error state, and the rest of Conference info remains
+  available
+
+#### Scenario: Current conference has a blank focus-build-id value — display-conference-focus-build-id-005
+
+- **WHEN** a participant views Conference info for a conference whose
+  focus-build-id value is empty or contains only whitespace
 - **THEN** Conference info shows no "Focus build id" row, no placeholder
   text, and no error state, and the rest of Conference info remains
   available
