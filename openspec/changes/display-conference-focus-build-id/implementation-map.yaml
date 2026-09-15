@@ -12,6 +12,26 @@ implementations:
     note: Изменения зафиксированы в коммите, но локальный запуск тестов заблокирован
       несовместимой JDK 26. Task 1 остаётся открытой (не complete) до
       прохождения тестов на совместимой JDK.
+  - repository_id: jitsi-web
+    task_id: "3"
+    task_ref: "3.1"
+    planning_revision: c29a8f3772109252b7e461ce603279206c773382
+    planning_fingerprint: 89839fd528c2e7734836c42cfdd96b6e660a0736dc8ba34516aed2b66cd0edc6
+    base_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
+    implementation_revision: 6c2b4eb5b97a7c162139e82ed0ec844bc1299d7b
+    recorded_state: partial
+    note: UI-код зафиксирован; JSON и diff проверены, lint и typecheck не
+      запускались без node_modules.
+  - repository_id: jitsi-web
+    task_id: "4"
+    task_ref: "3.2"
+    planning_revision: c29a8f3772109252b7e461ce603279206c773382
+    planning_fingerprint: 89839fd528c2e7734836c42cfdd96b6e660a0736dc8ba34516aed2b66cd0edc6
+    base_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
+    implementation_revision: 6c2b4eb5b97a7c162139e82ed0ec844bc1299d7b
+    recorded_state: partial
+    note: UI-код зафиксирован; JSON и diff проверены, lint и typecheck не
+      запускались без node_modules.
   - repository_id: lib-jitsi-meet
     task_id: "2"
     task_ref: "2.1"
