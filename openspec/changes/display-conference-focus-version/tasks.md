@@ -79,8 +79,8 @@
       default, regardless of the value. Required result: the row renders
       with the value when present, using only the default configuration.
       Traces to: `conference/focus-version-visibility`
-      — SC-FOCUS-VERSION-001, "Conference details UI shows the serving
-      Focus version is available for all participants" (SC-FOCUS-VERSION-003).
+      — SC-FOCUS-VERSION-001, "Focus version visibility is available to all
+      participants" (SC-FOCUS-VERSION-003).
       Verify by: this repository's existing static checks (type-check,
       lint, and `npm run lint:lang` for the new `lang/main.json` key)
       passing on the new/changed files; manual confirmation in the running
