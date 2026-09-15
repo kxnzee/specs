@@ -4,27 +4,14 @@ Accepted Proposal scope: `conference/focus-version-visibility` (new
 capability), spanning `jitsi-control`, `lib-jitsi-meet`, `jitsi-web`.
 `jitsi-videobridge` is out of scope.
 
-CodeGraph exploration of the three registered checkouts, at the time this
-artifact was first accepted, confirmed a three-repository shape but named
-the wrong transport on the `jitsi-control`/`lib-jitsi-meet` hop. The
-following state has since been corrected from confirmed Apply evidence and
-targeted CodeGraph inspection (see Correction below); no application was
-run to produce the correction.
+Targeted CodeGraph exploration of the three registered checkouts confirms
+the following three-repository path; no application was run to establish it.
 
-- **Correction (post Apply-gap, no application run):** the Planning
-  originally accepted below assumed the conference-allocation IQ response
-  (parsed by `lib-jitsi-meet`'s `moderator.js`) was the transport that
-  reaches `JitsiConference.properties`. Confirmed Apply evidence shows this
-  is false: `moderator.js`'s `_parseConferenceIq` return value is consumed
-  by a success handler (`_handleSuccess`) that discards properties outside
-  its own fixed allow-list, so a new named `<property>` added there would
-  never reach `JitsiConference.properties`, regardless of any change on the
-  Jicofo side of that response. `JitsiConference.properties` is instead kept
-  current from MUC presence: `ChatRoom.ts:1123-1135` reads every property
-  under `conference-properties` and emits
-  `CONFERENCE_PROPERTIES_CHANGED`; `JitsiConference.ts:673` subscribes
-  `_updateProperties` directly to that event. This path has no per-key
-  allow-list. Jicofo's
+- `JitsiConference.properties` is kept current from MUC presence:
+  `ChatRoom.ts:1123-1135` reads every property under
+  `conference-properties` and emits `CONFERENCE_PROPERTIES_CHANGED`;
+  `JitsiConference.ts:673` subscribes `_updateProperties` directly to that
+  event. This path has no per-key allow-list. Jicofo's
   `JitsiMeetConferenceImpl` already builds a `ConferenceProperties` object
   and publishes it in the focus presence — the same presence path already
   cited below for `ComponentVersionsExtension` — independent of the
@@ -45,16 +32,15 @@ run to produce the correction.
   same focus presence: the `ConferenceProperties` object
   `JitsiMeetConferenceImpl` already builds and publishes there, distinct
   from both of the above.
-- The conference-allocation success response is still built in
+- The conference-allocation success response is built in
   `ConferenceIqHandler.doHandleConferenceIq`
   (`jicofo/src/main/kotlin/org/jitsi/jicofo/xmpp/ConferenceIqHandler.kt:106-124`),
   which already attaches optional string properties to the response
   (`addProperty(ConferenceIq.Property("authentication", ...))`,
   `"externalAuth"`, `"sipGatewayEnabled"`, and later `"visitors-supported"`,
   `"live"`). This remains an established pattern for that response, but it
-  is no longer this change's target (see Correction above); the
-  `focus-version` property added to it under the original Plan must be
-  removed as a follow-up (see Tasks).
+  is not this change's target. It must continue to omit `focus-version`, and
+  its existing response test should retain an explicit absence assertion.
 - `lib-jitsi-meet`'s `ChatRoom` and `JitsiConference` already relay MUC
   presence `conference-properties` generically into
   `JitsiConference.properties` (`ChatRoom.ts:1123-1135` emits the change;
@@ -62,7 +48,7 @@ run to produce the correction.
   `JitsiConference.ts:2126-2184`), with no per-key allow-list on this path —
   unlike `xmpp/moderator.js`'s conference-allocation-response parsing
   (`_parseConferenceIq`, `modules/xmpp/moderator.js:261-291`), which is not
-  this change's target (see Correction above). Consumers read a value via
+  this change's target. Consumers read a value via
   `JitsiConference.getProperty(key)` (`JitsiConference.ts:4710-4712`),
   unchanged.
 - `jitsi-web`'s conference details header
@@ -84,6 +70,13 @@ run to produce the correction.
   an internal "render nothing when the underlying value/condition is absent"
   pattern (e.g. `VisitorsCountLabel` only makes sense when there are
   visitors).
+- `jitsi-web` already receives `JitsiConferenceEvents.PROPERTIES_CHANGED` in
+  `react/features/base/conference/actions.any.ts` and stores the complete map
+  in `state['features/base/conference'].properties` through the existing base
+  conference reducer. UI components select data from Redux; the local
+  `IJitsiConference` interface does not expose `getProperty`. The new label
+  therefore reads the optional key from that existing Redux map and adds no
+  state container or key-specific reducer.
 
 This confirms the three-repository shape assumed in Proposal is accurate,
 and identifies an established per-repository pattern to extend rather than
@@ -103,21 +96,17 @@ the value.
 
 ## Decisions and alternatives
 
-- **Transport (corrected)**: add `focus-version` to the `ConferenceProperties`
+- **Transport**: add `focus-version` to the `ConferenceProperties`
   object Jicofo's `JitsiMeetConferenceImpl` already builds and publishes in
   the focus presence, following the same pattern already used for that
-  object's other entries. Superseded alternative — a `ConferenceIq.Property`
-  on the conference-allocation success response, parsed by `moderator.js` —
-  was the originally accepted Planning transport but is now known not to
-  work: `moderator.js`'s parsed result is filtered by `_handleSuccess`
-  before it reaches `JitsiConference.properties`, so nothing added there
-  would ever become visible to `jitsi-web`. This alternative is kept here as
-  a documented, rejected/superseded path, not deleted from history — see
-  Tasks for the follow-up removal of the property already added to that
-  response during Apply. A separate request/response (e.g. reusing the
+  object's other entries. A `ConferenceIq.Property` on the
+  conference-allocation success response, parsed by `moderator.js`, is
+  rejected because `_handleSuccess` filters that parsed result before it
+  reaches `JitsiConference.properties`; adding the field there would not make
+  it visible to `jitsi-web`. A separate request/response (e.g. reusing the
   `/about/version` HTTP route) remains not chosen for the same reason as
   before: a second round-trip and value source for no accepted benefit.
-- **lib-jitsi-meet (corrected)**: no parser change. `ChatRoom` and
+- **lib-jitsi-meet**: no parser change. `ChatRoom` and
   `JitsiConference` already relay MUC presence
   `conference-properties` generically into `JitsiConference.properties`
   through the existing `_updateProperties` path, with no per-key allow-list,
@@ -137,9 +126,10 @@ the value.
   requiring a deploy-time `config.conferenceInfo` override — omitting this
   registration means `ConferenceInfo` never renders the component by
   default, independent of the underlying value. The new label component
-  internally renders nothing when `getProperty('focus-version')` is
-  undefined — mirroring the existing "render nothing when the underlying
-  value is absent" pattern already used by sibling labels in that list — so
+  selects `focus-version` from the existing
+  `state['features/base/conference'].properties` map and renders nothing when
+  the selected value is absent or not a non-empty string — mirroring the
+  existing "render nothing when the underlying value is absent" pattern — so
   once registered, the row's conditional appearance is driven only by value
   presence, not by needing further deploy-time configuration. This directly
   implements Alternative B from brainstorm.md (conditional row, no
@@ -156,9 +146,9 @@ the value.
 
 | Repository | Responsibility | Contracts and dependencies |
 | --- | --- | --- |
-| `jitsi-control` | Add the already-public Focus version to the existing `ConferenceProperties` published in the focus presence (`JitsiMeetConferenceImpl`); remove the `focus-version` property mistakenly added to the conference-allocation IQ response during Apply (superseded transport). | Produces the `focus-version` value consumed by `lib-jitsi-meet` via presence; no inbound dependency from this change. |
+| `jitsi-control` | Add the already-public Focus version to the existing `ConferenceProperties` published in the focus presence (`JitsiMeetConferenceImpl`); keep the conference-allocation IQ response unchanged and explicitly covered as not containing `focus-version`. | Produces the `focus-version` value consumed by `lib-jitsi-meet` via presence; no inbound dependency from this change. |
 | `lib-jitsi-meet` | Add contract regression coverage confirming the existing generic MUC presence `conference-properties` pass-through (`ChatRoom` into `JitsiConference`) carries `focus-version` into the current conference's exposed properties; no parser or storage change. | Depends on `jitsi-control` publishing the property in focus presence; is depended on by `jitsi-web` for reading it. |
-| `jitsi-web` | Conditionally render the "Focus version" row in the conference details UI for all participants, only when `lib-jitsi-meet` exposes a value, using a new `lang/main.json` translation key `info.focusVersion` (`"Focus version: {{version}}"`). | Depends on `lib-jitsi-meet` exposing the property; no downstream dependency. |
+| `jitsi-web` | Select `focus-version` from the existing base-conference Redux properties map and conditionally render the "Focus version" row for all participants, using a new `lang/main.json` translation key `info.focusVersion` (`"Focus version: {{version}}"`). | Depends on the existing `JitsiConferenceEvents.PROPERTIES_CHANGED` bridge from `lib-jitsi-meet`; no new state and no downstream dependency. |
 
 ## Risks / Trade-offs
 
@@ -181,12 +171,6 @@ the value.
   omit `focus-version` can still hide the row even when the value is
   present — an accepted, pre-existing property of this configuration
   mechanism, not new to this change.
-- Correction risk: this Design was revised after a confirmed Apply-gap on
-  the originally accepted transport; the `jitsi-control` task that added
-  `focus-version` to the conference-allocation IQ response must be followed
-  up to remove it (dead code on the wrong path), and the in-progress
-  `lib-jitsi-meet` work started against `moderator.js` needs to be
-  redirected to the presence-based contract test instead — see Tasks.
 
 ## Migration, rollout and rollback
 
@@ -206,8 +190,8 @@ None outstanding for Planning. Brainstorm's UX-approval and disclosure
 Open questions are resolved (see brainstorm.md). The wire property key
 (`focus-version`, used identically by `jitsi-control`'s presence
 `ConferenceProperties`, `lib-jitsi-meet`'s relayed `properties` map, and
-`jitsi-web`'s `getProperty` read) and the new `ConferenceInfo` component id
+`jitsi-web`'s base-conference Redux properties read) and the new `ConferenceInfo` component id
 (`focus-version`) are fixed by this corrected Design and carried
-consistently through Tasks and Plan. The corrected path was confirmed by
+consistently through Tasks. The path was confirmed by
 targeted CodeGraph inspection; Apply still must verify its tests and actual
 behavior. No application was run during this correction.
