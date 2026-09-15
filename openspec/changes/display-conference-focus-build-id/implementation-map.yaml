@@ -3,22 +3,28 @@ change_id: display-conference-focus-build-id
 implementations:
   - repository_id: jitsi-control
     task_id: "1"
-    task_ref: "1.1"
-    planning_revision: 323b65e65f66b30fe4cf22ade3b30f110a11e9e7
-    planning_fingerprint: 8fdd119ffde0ffdc37d5c82455958adc7ebbf45496b915bef5c44ac276e18010
+    store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
     base_revision: 6cf362f52764c1ec0e54e914f3b0f1e2cb632768
-    implementation_revision: b1458883e9226997188375708e4ddceee50f9262
-    recorded_state: partial
-    note: Изменения зафиксированы в коммите, но локальный запуск тестов заблокирован
-      несовместимой JDK 26. Task 1 остаётся открытой (не complete) до
-      прохождения тестов на совместимой JDK.
+    implementation_revision: 863211b690f1c2dbbeb2fb024be875c8b3d11aee
+    note: Код слит; локальные Maven-тесты не запускались из-за несовместимой JDK 26.
+  - repository_id: jitsi-web
+    task_id: "3"
+    store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
+    base_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
+    implementation_revision: 2381cea5eca767b42501128bc01959a9efad90a9
+    note: UI-код слит; JSON и diff проверены, lint и typecheck не запускались без
+      node_modules.
+  - repository_id: jitsi-web
+    task_id: "4"
+    store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
+    base_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
+    implementation_revision: 2381cea5eca767b42501128bc01959a9efad90a9
+    note: UI-код слит; JSON и diff проверены, lint и typecheck не запускались без
+      node_modules.
   - repository_id: lib-jitsi-meet
     task_id: "2"
-    task_ref: "2.1"
-    planning_revision: bc794bd4c732343a6e6bcb92dde3a4cc43e6ce2b
-    planning_fingerprint: 89839fd528c2e7734836c42cfdd96b6e660a0736dc8ba34516aed2b66cd0edc6
+    store_revision: bc794bd4c732343a6e6bcb92dde3a4cc43e6ce2b
     base_revision: 9ce4478b3ce8bded38fcb3f1a950b26f10b4c28a
-    implementation_revision: 0f059c33c9feedd7f90d555154e989d667b0fd60
-    recorded_state: partial
+    implementation_revision: 0842ecf5ea533244b021ac95887f108cf34215ba
     note: Точечные тесты зафиксированы; запуск не выполнялся в изолированном
       checkout без node_modules.

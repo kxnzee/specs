@@ -133,7 +133,7 @@ no other relayed property affected either way.
 **Depends on:** `jitsi-control` task 1.1 — the property name `focus-version` and
 its plain-string value published in the focus presence.
 
-- [ ] 2.1 Add regression coverage proving the existing generic presence
+- [x] 2.1 Add regression coverage proving the existing generic presence
       pass-through carries `focus-version`. Required result: a test shows that
       when the focus presence carries a `focus-version` conference property,
       `JitsiConference.getProperty('focus-version')` returns it, and when the
@@ -169,7 +169,7 @@ its plain-string value published in the focus presence.
     this task, and does the fixture presence payload use the exact key and value
     format `jitsi-control` publishes in task 1.1?
 
-- [ ] 2.2 Confirm the pass-through stays key-agnostic and storage-free. Required
+- [x] 2.2 Confirm the pass-through stays key-agnostic and storage-free. Required
       result: the `focus-version` value lives only in the existing in-memory
       conference `properties` map, with no key-specific branching and no new
       state container.
@@ -195,7 +195,7 @@ its plain-string value published in the focus presence.
     unchanged, and was no new state container introduced anywhere in this
     repository's diff?
 
-- [ ] 2.3 Cross-repository contract check owned by this repository: prove the
+- [x] 2.3 Cross-repository contract check owned by this repository: prove the
       presence pass-through accepts the exact property name and value format
       `jitsi-control` publishes. Required result: given a fixture focus presence
       payload shaped like task 1.1's output, `JitsiConference.properties` ends up
