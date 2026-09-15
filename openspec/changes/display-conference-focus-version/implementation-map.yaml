@@ -15,3 +15,12 @@ implementations:
     base_revision: 03ece5e4ee705c39e6e1e55d8ab50027065383cd
     implementation_revision: 58420a865bd31861fdd75eab71e1e187adefebc0
     state: complete
+  - repository_id: lib-jitsi-meet
+    task_id: "5"
+    planning_revision: 5f9bff9080b4490ee6b651118da9f2d6b963e6ce
+    planning_fingerprint: eacfd1968f9881780afd451452c13de2762208dd15d634dbe3e5f259658c3c36
+    base_revision: 7a31fd0765a8a67412b319dc81c2174f71d61969
+    implementation_revision: 49df6ee8f4a87d47889942fb991a8e52fc7b5f32
+    state: partial
+    note: Implementation committed at current revision 49df6ee8; human PR review
+      pending.
