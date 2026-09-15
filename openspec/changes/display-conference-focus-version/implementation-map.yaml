@@ -4,16 +4,90 @@ implementations:
   - repository_id: jitsi-control
     task_id: "1"
     task_ref: "1.1"
-    planning_revision: e8b6d75383cde676a1eebd6264aa56eab2a6f4f2
-    planning_fingerprint: d81514944f5187524fbc62888303c8bf200446122dc57f0850787bdc895db353
+    planning_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
+    planning_fingerprint: 50e5441093760c8120f2decde6d4b6371ebbdb3f741a76bb916dd23b58203a29
     base_revision: 03ece5e4ee705c39e6e1e55d8ab50027065383cd
-    implementation_revision: 58420a865bd31861fdd75eab71e1e187adefebc0
-    recorded_state: complete
+    implementation_revision: 03749cc414207511a4e0bb061442d1f53fc4392f
+    recorded_state: partial
+    note: Код слит; Maven-проверки текущего кандидата не запускались из-за
+      несовместимой JDK 26.
   - repository_id: jitsi-control
     task_id: "2"
     task_ref: "1.2"
-    planning_revision: e8b6d75383cde676a1eebd6264aa56eab2a6f4f2
-    planning_fingerprint: d81514944f5187524fbc62888303c8bf200446122dc57f0850787bdc895db353
+    planning_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
+    planning_fingerprint: 50e5441093760c8120f2decde6d4b6371ebbdb3f741a76bb916dd23b58203a29
     base_revision: 03ece5e4ee705c39e6e1e55d8ab50027065383cd
-    implementation_revision: 58420a865bd31861fdd75eab71e1e187adefebc0
-    recorded_state: complete
+    implementation_revision: 03749cc414207511a4e0bb061442d1f53fc4392f
+    recorded_state: partial
+    note: Код слит; Maven-проверки текущего кандидата не запускались из-за
+      несовместимой JDK 26.
+  - repository_id: jitsi-web
+    task_id: "6"
+    task_ref: "3.1"
+    planning_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
+    planning_fingerprint: 50e5441093760c8120f2decde6d4b6371ebbdb3f741a76bb916dd23b58203a29
+    base_revision: 28f9bd63cb80a16e4985c7d6d3c644cabc412e71
+    implementation_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
+    recorded_state: partial
+    note: UI-код слит; JSON и diff проверены, lint и typecheck не запускались без
+      node_modules.
+  - repository_id: jitsi-web
+    task_id: "7"
+    task_ref: "3.2"
+    planning_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
+    planning_fingerprint: 50e5441093760c8120f2decde6d4b6371ebbdb3f741a76bb916dd23b58203a29
+    base_revision: 28f9bd63cb80a16e4985c7d6d3c644cabc412e71
+    implementation_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
+    recorded_state: partial
+    note: UI-код слит; JSON и diff проверены, lint и typecheck не запускались без
+      node_modules.
+  - repository_id: jitsi-web
+    task_id: "8"
+    task_ref: "3.3"
+    planning_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
+    planning_fingerprint: 50e5441093760c8120f2decde6d4b6371ebbdb3f741a76bb916dd23b58203a29
+    base_revision: 28f9bd63cb80a16e4985c7d6d3c644cabc412e71
+    implementation_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
+    recorded_state: partial
+    note: UI-код слит; JSON и diff проверены, lint и typecheck не запускались без
+      node_modules.
+  - repository_id: jitsi-web
+    task_id: "9"
+    task_ref: "3.4"
+    planning_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
+    planning_fingerprint: 50e5441093760c8120f2decde6d4b6371ebbdb3f741a76bb916dd23b58203a29
+    base_revision: 28f9bd63cb80a16e4985c7d6d3c644cabc412e71
+    implementation_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
+    recorded_state: partial
+    note: UI-код слит; JSON и diff проверены, lint и typecheck не запускались без
+      node_modules.
+  - repository_id: lib-jitsi-meet
+    task_id: "3"
+    task_ref: "2.1"
+    planning_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
+    planning_fingerprint: 50e5441093760c8120f2decde6d4b6371ebbdb3f741a76bb916dd23b58203a29
+    base_revision: 7a31fd0765a8a67412b319dc81c2174f71d61969
+    implementation_revision: 9ce4478b3ce8bded38fcb3f1a950b26f10b4c28a
+    recorded_state: partial
+    note: Код слит; проверки текущего merge-кандидата в этом пакете не
+      перезапускались.
+  - repository_id: lib-jitsi-meet
+    task_id: "4"
+    task_ref: "2.2"
+    planning_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
+    planning_fingerprint: 50e5441093760c8120f2decde6d4b6371ebbdb3f741a76bb916dd23b58203a29
+    base_revision: 7a31fd0765a8a67412b319dc81c2174f71d61969
+    implementation_revision: 9ce4478b3ce8bded38fcb3f1a950b26f10b4c28a
+    recorded_state: partial
+    note: Код слит; проверки текущего merge-кандидата в этом пакете не
+      перезапускались.
+  - repository_id: lib-jitsi-meet
+    task_id: "5"
+    task_ref: "2.3"
+    planning_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
+    planning_fingerprint: 50e5441093760c8120f2decde6d4b6371ebbdb3f741a76bb916dd23b58203a29
+    base_revision: 7a31fd0765a8a67412b319dc81c2174f71d61969
+    implementation_revision: 9ce4478b3ce8bded38fcb3f1a950b26f10b4c28a
+    recorded_state: partial
+    note: Код слит; проверки текущего merge-кандидата в этом пакете не
+      перезапускались.
