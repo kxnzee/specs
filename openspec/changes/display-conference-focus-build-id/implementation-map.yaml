@@ -6,14 +6,12 @@ implementations:
     store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
     base_revision: 6cf362f52764c1ec0e54e914f3b0f1e2cb632768
     implementation_revision: 863211b690f1c2dbbeb2fb024be875c8b3d11aee
-    recorded_state: partial
     note: Код слит; локальные Maven-тесты не запускались из-за несовместимой JDK 26.
   - repository_id: jitsi-web
     task_id: "3"
     store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
     base_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
     implementation_revision: 2381cea5eca767b42501128bc01959a9efad90a9
-    recorded_state: partial
     note: UI-код слит; JSON и diff проверены, lint и typecheck не запускались без
       node_modules.
   - repository_id: jitsi-web
@@ -21,7 +19,6 @@ implementations:
     store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
     base_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
     implementation_revision: 2381cea5eca767b42501128bc01959a9efad90a9
-    recorded_state: partial
     note: UI-код слит; JSON и diff проверены, lint и typecheck не запускались без
       node_modules.
   - repository_id: lib-jitsi-meet
@@ -29,6 +26,5 @@ implementations:
     store_revision: bc794bd4c732343a6e6bcb92dde3a4cc43e6ce2b
     base_revision: 9ce4478b3ce8bded38fcb3f1a950b26f10b4c28a
     implementation_revision: 0842ecf5ea533244b021ac95887f108cf34215ba
-    recorded_state: partial
     note: Точечные тесты зафиксированы; запуск не выполнялся в изолированном
       checkout без node_modules.

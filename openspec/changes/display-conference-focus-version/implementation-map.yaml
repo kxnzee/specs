@@ -6,7 +6,6 @@ implementations:
     store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
     base_revision: 03ece5e4ee705c39e6e1e55d8ab50027065383cd
     implementation_revision: 03749cc414207511a4e0bb061442d1f53fc4392f
-    recorded_state: partial
     note: Код слит; Maven-проверки текущего кандидата не запускались из-за
       несовместимой JDK 26.
   - repository_id: jitsi-control
@@ -14,7 +13,6 @@ implementations:
     store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
     base_revision: 03ece5e4ee705c39e6e1e55d8ab50027065383cd
     implementation_revision: 03749cc414207511a4e0bb061442d1f53fc4392f
-    recorded_state: partial
     note: Код слит; Maven-проверки текущего кандидата не запускались из-за
       несовместимой JDK 26.
   - repository_id: jitsi-web
@@ -22,7 +20,6 @@ implementations:
     store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
     base_revision: 28f9bd63cb80a16e4985c7d6d3c644cabc412e71
     implementation_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
-    recorded_state: partial
     note: UI-код слит; JSON и diff проверены, lint и typecheck не запускались без
       node_modules.
   - repository_id: jitsi-web
@@ -30,7 +27,6 @@ implementations:
     store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
     base_revision: 28f9bd63cb80a16e4985c7d6d3c644cabc412e71
     implementation_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
-    recorded_state: partial
     note: UI-код слит; JSON и diff проверены, lint и typecheck не запускались без
       node_modules.
   - repository_id: jitsi-web
@@ -38,7 +34,6 @@ implementations:
     store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
     base_revision: 28f9bd63cb80a16e4985c7d6d3c644cabc412e71
     implementation_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
-    recorded_state: partial
     note: UI-код слит; JSON и diff проверены, lint и typecheck не запускались без
       node_modules.
   - repository_id: jitsi-web
@@ -46,7 +41,6 @@ implementations:
     store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
     base_revision: 28f9bd63cb80a16e4985c7d6d3c644cabc412e71
     implementation_revision: 777ed01f58f58362b0dd7d1d4fd74be1ad0d0d24
-    recorded_state: partial
     note: UI-код слит; JSON и diff проверены, lint и typecheck не запускались без
       node_modules.
   - repository_id: lib-jitsi-meet
@@ -54,16 +48,13 @@ implementations:
     store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
     base_revision: 7a31fd0765a8a67412b319dc81c2174f71d61969
     implementation_revision: 9ce4478b3ce8bded38fcb3f1a950b26f10b4c28a
-    recorded_state: complete
   - repository_id: lib-jitsi-meet
     task_id: "4"
     store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
     base_revision: 7a31fd0765a8a67412b319dc81c2174f71d61969
     implementation_revision: 9ce4478b3ce8bded38fcb3f1a950b26f10b4c28a
-    recorded_state: complete
   - repository_id: lib-jitsi-meet
     task_id: "5"
     store_revision: f6c3578b771a48d516abd7f5b76c569dc5cab0a5
     base_revision: 7a31fd0765a8a67412b319dc81c2174f71d61969
     implementation_revision: 9ce4478b3ce8bded38fcb3f1a950b26f10b4c28a
-    recorded_state: complete
