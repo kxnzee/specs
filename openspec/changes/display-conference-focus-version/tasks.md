@@ -77,24 +77,22 @@ conference-allocation response field changes.
     4. Add the `focus-version` entry to `ConferenceProperties` following the
        pattern from step 1, then re-run the test and confirm it passes.
     5. Inspect the `ConferenceIqHandler` allocation-response block and its test
-       class; if either adds or asserts a `focus-version` property, remove that
-       call/assertion and leave every other property and assertion untouched.
-       Drop the `CurrentVersionImpl` import from that file only if nothing else
-       there still uses it.
-    6. Run the `ConferenceIqHandler` test class and confirm it passes with no
-       `focus-version` assertion remaining.
+       class. Keep the production response free of `focus-version`, and retain
+       or add an explicit negative assertion proving the response omits it.
+       Leave every other property and assertion untouched.
+    6. Run the `ConferenceIqHandler` test class and confirm the negative
+       `focus-version` assertion and all existing response assertions pass.
   - **Verification:**
     - Command: `mvn -pl jicofo -am -Dtest=ConferenceIqHandlerTest -Dsurefire.failIfNoSpecifiedTests=false test`
       (plus the same invocation for the `JitsiMeetConferenceImpl`
       presence/`ConferenceProperties` test class confirmed in step 1)
     - Expected: both runs pass; the presence test asserts the `focus-version`
-      entry with the expected value alongside the pre-existing entries, and no
-      `focus-version` assertion remains on the allocation response.
-  - **Review checkpoint:** does the diff touch only the `ConferenceProperties`
-    construction/publication path and the `focus-version` property on the
-    allocation response — with no allocation, bridge-selection or routing
-    logic, and no other response field (`ready`, `focusJid`, existing
-    properties, error handling) affected?
+      entry with the expected value alongside the pre-existing entries, and the
+      allocation-response test explicitly asserts that the key is absent.
+  - **Review checkpoint:** does the production diff touch only the
+    `ConferenceProperties` construction/publication path, while the allocation
+    response stays unchanged and its absence assertion remains explicit — with
+    no allocation, bridge-selection or routing logic affected?
 
 - [ ] 1.2 Regression-confirm that no other `jitsi-control` behavior changed.
       Required result: the existing conference-allocation request/response path
@@ -228,8 +226,9 @@ its plain-string value published in the focus presence.
 `focus-version` conference property, and shows nothing — no row, no placeholder,
 no error state — when that property is absent.
 
-**Depends on:** `lib-jitsi-meet` tasks 2.1–2.2 — the exact property key read via
-`getProperty('focus-version')`.
+**Depends on:** `lib-jitsi-meet` tasks 2.1–2.2 — the exact property key carried
+by the generic `JitsiConference.properties` update and emitted through the
+existing properties-changed event consumed by `jitsi-web`.
 
 **Test harness note (applies to 3.1–3.4):** this repository has no
 component/unit test harness for `react/features` — no test file exists for
@@ -249,6 +248,11 @@ application.
       from this directory (`InsecureRoomNameLabel`, `RaisedHandsCountLabel`,
       `SpeakerStatsLabel`, `SubjectText`, `ToggleTopPanelLabel`); no `.web`
       suffix, matching this directory's local convention.
+      Select the optional value from
+      `state['features/base/conference'].properties`, the existing Redux map
+      populated from `JitsiConferenceEvents.PROPERTIES_CHANGED`; do not call
+      `getProperty` on the local `IJitsiConference` interface, which does not
+      expose that method.
     - Modify: `react/features/conference/components/web/ConferenceInfo.tsx` —
       add `{ Component: FocusVersionLabel, id: 'focus-version' }` to the
       `COMPONENTS` array plus the matching import.
@@ -262,11 +266,11 @@ application.
     - Modify: `lang/main.json` — add `info.focusVersion` with value
       `"Focus version: {{version}}"`, alongside the existing `info.*` entries.
   - **Steps:**
-    1. Create `FocusVersionLabel.tsx`: read the current conference's
-       `focus-version` property through the same Redux-connected access pattern
-       this feature area already uses to reach the current `JitsiConference`
-       (as `VisitorsCountLabel` and `E2EELabel` do for their own
-       conference-derived values).
+    1. Create `FocusVersionLabel.tsx`: use `useSelector` with `IReduxState` to
+       read `focus-version` from the existing
+       `features/base/conference.properties` map. Guard the generic object with
+       a property-membership and string-value check; do not add a new reducer,
+       state field, selector module or `IJitsiConference.getProperty` typing.
     2. Render the value as a text row inside this directory's existing label
        presentation wrapper, matching the visual pattern of sibling labels such
        as `SpeakerStatsLabel`, using the `info.focusVersion` key. Add no
@@ -300,9 +304,9 @@ application.
     return; sibling labels in the same directory as the reference "render
     nothing when the underlying value is absent" pattern.
   - **Steps:**
-    1. Confirm `FocusVersionLabel` returns `null` when
-       `getProperty('focus-version')` is `undefined`, before any wrapper or text
-       is rendered.
+    1. Confirm `FocusVersionLabel` returns `null` when the Redux properties map
+       does not contain a non-empty string at `focus-version`, before any
+       wrapper or text is rendered.
     2. Confirm the absent path emits no placeholder string, no empty label
        element and no error state — compare against a sibling label that already
        renders nothing when its value is absent.
@@ -325,8 +329,9 @@ application.
     `react/features/conference/components/web/FocusVersionLabel.tsx` and its
     entry in `ConferenceInfo.tsx`'s `COMPONENTS` array.
   - **Steps:**
-    1. Confirm the component reads only `getProperty('focus-version')` and
-       derives its visibility from that value alone.
+    1. Confirm the component reads only the `focus-version` entry from the
+       existing base-conference Redux properties map and derives its visibility
+       from that value alone.
     2. Confirm no moderator/role/permission selector is imported or consulted in
        the component or in its `COMPONENTS` registration.
   - **Verification:**
@@ -338,29 +343,30 @@ application.
     the component itself does not perform?
 
 - [ ] 3.4 Cross-repository contract check owned by this repository: prove the UI
-      reads the exact key `lib-jitsi-meet` exposes, for both the present and
-      absent cases. Required result: the literal key string used by the component
-      matches the key relayed into `JitsiConference.properties`.
+      reads the exact key `lib-jitsi-meet` emits through
+      `JitsiConferenceEvents.PROPERTIES_CHANGED`, for both the present and absent
+      cases. Required result: the literal key used by the component matches the
+      key relayed into the base-conference Redux properties map.
   - **Traces to:** R1/SC-FOCUS-VERSION-001, R2/SC-FOCUS-VERSION-002.
   - **Depends on:** `lib-jitsi-meet` tasks 2.1–2.2 (the exposed key) and task 3.1
     (the consuming component).
   - **Files or anchors:**
-    `react/features/conference/components/web/FocusVersionLabel.tsx` — the
-    `getProperty` call; compared against the key asserted in `lib-jitsi-meet`
-    task 2.1.
+    `react/features/conference/components/web/FocusVersionLabel.tsx` — the Redux
+    properties lookup; compared against the key asserted in `lib-jitsi-meet`
+    task 2.1 and the existing `PROPERTIES_CHANGED` event bridge in
+    `react/features/base/conference/actions.any.ts`.
   - **Steps:**
-    1. Extract the literal key string passed to `getProperty` in
-       `FocusVersionLabel.tsx`.
+    1. Extract the literal key string used to read the base-conference Redux
+       properties map in `FocusVersionLabel.tsx`.
     2. Compare it character-for-character with the key asserted in
        `lib-jitsi-meet` task 2.1 and published by `jitsi-control` task 1.1.
-    3. Confirm the component's absent-case behavior matches what
-       `lib-jitsi-meet` returns for a missing key (`undefined`, not `null` or an
-       empty string).
+    3. Confirm the component treats a missing, non-string or empty Redux value
+       as absent, without adding a fallback value.
   - **Verification:**
-    - Command: `grep -n "getProperty(" react/features/conference/components/web/FocusVersionLabel.tsx`
-    - Expected: exactly one call, with the literal `'focus-version'` — identical
-      to the key in `lib-jitsi-meet` task 2.1's assertions. Manual confirmation
-      of both cases in the running app belongs to Verify.
+    - Command: `grep -n "focus-version" react/features/conference/components/web/FocusVersionLabel.tsx`
+    - Expected: one property lookup with the literal `'focus-version'` —
+      identical to the key in `lib-jitsi-meet` task 2.1's assertions. Manual
+      confirmation of both cases in the running app belongs to Verify.
   - **Review checkpoint:** is the key a shared literal used consistently across
     all three repositories, with no repository-local alias, casing variant or
     constant that could drift?
@@ -376,7 +382,9 @@ result. Both run after their repository's local tasks are complete.
 **Wire contract:** property name `focus-version`, plain string value in
 `CurrentVersionImpl.VERSION.toString()` format (for example `1.1-123-abc1234`),
 carried in the focus presence `ConferenceProperties`, relayed unchanged into
-`JitsiConference.properties`, read via `getProperty('focus-version')`.
+`JitsiConference.properties`, emitted through the existing properties-changed
+event, stored in the base-conference Redux properties map and selected there by
+the UI label.
 
 **Ordering and absent/old-version behavior:** deployment order is unconstrained.
 Every hop treats the value as optional, so an older `jitsi-control` that omits
