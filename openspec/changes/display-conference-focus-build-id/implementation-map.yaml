@@ -1,0 +1,13 @@
+contract_version: 1
+change_id: display-conference-focus-build-id
+implementations:
+  - repository_id: jitsi-control
+    task_id: "1"
+    planning_revision: 323b65e65f66b30fe4cf22ade3b30f110a11e9e7
+    planning_fingerprint: 8fdd119ffde0ffdc37d5c82455958adc7ebbf45496b915bef5c44ac276e18010
+    base_revision: 6cf362f52764c1ec0e54e914f3b0f1e2cb632768
+    implementation_revision: b1458883e9226997188375708e4ddceee50f9262
+    state: partial
+    note: Изменения зафиксированы в коммите, но локальный запуск тестов заблокирован
+      несовместимой JDK 26. Task 1 остаётся открытой (не complete) до
+      прохождения тестов на совместимой JDK.
