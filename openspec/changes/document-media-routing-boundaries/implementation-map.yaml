@@ -1,0 +1,29 @@
+contract_version: 1
+change_id: document-media-routing-boundaries
+attempts: []
+implementations:
+  - repository_id: jitsi-control
+    task:
+      id: "1"
+      description: 1.1 Add `doc/bridge-control-boundary.md` documenting the bridge-selection
+    schema_name: superspec-multirepo
+    pull_request: https://github.com/kxnzee/jicofo/pull/2
+    plan_url: https://github.com/kxnzee/jicofo/pull/2
+    commits:
+      - 03ece5e4ee705c39e6e1e55d8ab50027065383cd
+    summary: Merged bridge-selection boundary documentation and its cross-repository
+      link.
+    remaining: ""
+    version: 1
+  - repository_id: jitsi-videobridge
+    task:
+      id: "3"
+      description: 2.1 Add `doc/bridge-control-boundary.md` documenting the colibri2
+    schema_name: superspec-multirepo
+    pull_request: https://github.com/kxnzee/jitsi-videobridge/pull/1
+    plan_url: https://github.com/kxnzee/jitsi-videobridge/pull/1
+    commits:
+      - a2f5fba8c5bd018216a352e6db2cb0c70c635d91
+    summary: Merged Colibri2 endpoint boundary documentation and protocol cross-links.
+    remaining: ""
+    version: 1

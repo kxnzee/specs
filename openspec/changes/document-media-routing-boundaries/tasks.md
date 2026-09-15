@@ -1,6 +1,6 @@
 ## 1. `jitsi-control`
 
-- [ ] 1.1 Add `doc/bridge-control-boundary.md` documenting the bridge-selection
+- [x] 1.1 Add `doc/bridge-control-boundary.md` documenting the bridge-selection
   step (`BridgeSelector.selectBridge`) and the outbound colibri2 control
   request sent via `ColibriV2SessionManager` / `Colibri2Session` to the
   selected bridge. Confirm the current entry point location by reading the
@@ -8,7 +8,7 @@
   `design.md` - Context, but the published anchor must reflect current
   source) and cite its file:line in the doc; verify by confirming the cited
   anchor matches current source and the doc renders as valid markdown.
-- [ ] 1.2 Cross-link `doc/bridge-control-boundary.md` to
+- [x] 1.2 Cross-link `doc/bridge-control-boundary.md` to
   `jitsi-videobridge/doc/bridge-control-boundary.md` and to the existing
   `doc/conference-request.md`, without duplicating wire-format content already
   documented there; verify by reading all three docs together and confirming
@@ -16,7 +16,7 @@
 
 ## 2. `jitsi-videobridge`
 
-- [ ] 2.1 Add `doc/bridge-control-boundary.md` documenting the colibri2
+- [x] 2.1 Add `doc/bridge-control-boundary.md` documenting the colibri2
   request-handling path in `Conference` (`ColibriQueue` →
   `Colibri2ConferenceHandler.handleConferenceModifyIQ`) that receives and
   processes the control request from `jitsi-control`. Confirm the current
@@ -25,7 +25,7 @@
   published anchor must reflect current source) and cite its file:line in the
   doc; verify by confirming the cited anchor matches current source and the
   doc renders as valid markdown.
-- [ ] 2.2 Cross-link `doc/bridge-control-boundary.md` to the existing
+- [x] 2.2 Cross-link `doc/bridge-control-boundary.md` to the existing
   `doc/rest-colibri2.md` protocol reference and to
   `jitsi-control/doc/bridge-control-boundary.md`, without duplicating
   wire-format content already documented there; verify by reading both docs
@@ -33,7 +33,7 @@
 
 ## 3. Cross-repository review
 
-- [ ] 3.1 Prepare PR review evidence for both docs: open a PR in each of
+- [x] 3.1 Prepare PR review evidence for both docs: open a PR in each of
   `jitsi-control` and `jitsi-videobridge` referencing this Change
   (`document-media-routing-boundaries`), and request review confirming the
   documented boundary and cited file:line anchors are accurate; owner: primary
